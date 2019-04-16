@@ -1,5 +1,6 @@
 #include "MapUtil.h"
 #include "RenderManager.h"
+#include "ShadowMapRenderer.h"
 
 RenderManager & RenderManager::getInstance()
 {
@@ -11,6 +12,7 @@ void RenderManager::RenderWorld(Camera* camera)
 {
 	renderingCamera = camera;
 
+	ShadowMapRenderer::getInstance().RenderShadowMap();
 	renderPipeline->Render();
 
 	renderingCamera = nullptr;
@@ -151,7 +153,7 @@ void RenderManager::SortRenderQueue()
 	}
 }
 
-void RenderManager::RenderObjects()
+void RenderManager::RenderObjects(Shader* globalShader)
 {
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -160,18 +162,18 @@ void RenderManager::RenderObjects()
 	glDisable(GL_BLEND);
 	for (MeshRenderer* renderer : opaqueQueue)
 	{
-		renderer->Draw(renderingCamera);
+		renderer->Draw(renderingCamera, globalShader);
 	}
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	for (MeshRenderer* renderer : transparentQueue)
 	{
-		renderer->Draw(renderingCamera);
+		renderer->Draw(renderingCamera, globalShader);
 	}
 
 	for (MeshRenderer* renderer : globalQueue)
 	{
-		renderer->Draw(renderingCamera);
+		renderer->Draw(renderingCamera, globalShader);
 	}
 }

@@ -1,65 +1,25 @@
 #include "Texture.h"
 
 #include <iostream>
-#include <glad/glad.h>
 #include "stb_image.h"
 
-Texture::Texture()
+Texture::Texture(int width, int height, int internalFormat, int format, int dataType, int wrapMethodX, int wrapMethodY) 
+	: Texture(nullptr, width, height, internalFormat, format, dataType, wrapMethodX, wrapMethodY) {}
+
+Texture::Texture(unsigned char * data, int width, int height, int internalFormat, int format, int dataType, int wrapMethodX, int wrapMethodY)
 {
-	glGenTextures(1, &ID);
-	glBindTexture(GL_TEXTURE_2D, ID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SystemSettings::WINDOW_WIDTH, SystemSettings::WINDOW_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	CreateTextureInternal(nullptr, width, height, internalFormat, format, dataType, wrapMethodX, wrapMethodY);
 }
 
-Texture::Texture(std::string imgPath) : Texture(imgPath.c_str())
+Texture::Texture(std::string imgPath, int wrapMethodX, int wrapMethodY) : Texture(imgPath.c_str(), wrapMethodX, wrapMethodY) {}
+
+Texture::Texture(const char * imgPath, int wrapMethodX, int wrapMethodY)
 {
+	int width, height;
+	int glFormat;
+	unsigned char* data = LoadTexture(imgPath, &width, &height, &glFormat);
 
-}
-
-Texture::Texture(const char * imgPath)
-{
-	int width;
-	int height;
-	int nrChannels;
-
-	glGenTextures(1, &ID);
-	glBindTexture(GL_TEXTURE_2D, ID);
-
-	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load(imgPath, &width, &height, &nrChannels, 0);
-	if (data)
-	{
-		int colorFlag;
-		if (nrChannels == 1)
-			colorFlag = GL_RED;
-		else if (nrChannels == 3)
-			colorFlag = GL_RGB;
-		else if (nrChannels == 4)
-			colorFlag = GL_RGBA;
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		// Generate a texture
-		// arg1: the type of the texture to be generated.
-		// arg2: specify the mipmap level for which we want to create a texture for. If we want our image to be the top level, set it to 0.
-		// arg3: specify which kind of format we want to store the texture.
-		// arg4: and arg5: the width and height of the resulting texture.
-		// arg6: 0 for now.
-		// arg7 and arg8: format and data type of the source image.
-		// arg9: actual image data.
-		glTexImage2D(GL_TEXTURE_2D, 0, colorFlag, width, height, 0, colorFlag, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data);
+	CreateTextureInternal(data, width, height, glFormat, glFormat, GL_UNSIGNED_BYTE, wrapMethodX, wrapMethodY);
 }
 
 void Texture::Bind(int unit)
@@ -73,4 +33,46 @@ void Texture::Bind(int unit)
 	// Set the texture unit of this texture.
 	glActiveTexture(GL_TEXTURE0 + unit);
 	glBindTexture(GL_TEXTURE_2D, ID);
+}
+
+void Texture::CreateTextureInternal(unsigned char * data, int width, int height, int glInternalFormat, int glFormat, int glDataType, int glWrapMethodX, int glWrapMethodY)
+{
+	glGenTextures(1, &ID);
+	glBindTexture(GL_TEXTURE_2D, ID);
+	glTexImage2D(GL_TEXTURE_2D, 0, glInternalFormat, width, height, 0, glFormat, glDataType, data);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrapMethodX);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrapMethodY);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	if (data)
+	{
+		glGenerateMipmap(GL_TEXTURE_2D);
+		stbi_image_free(data);
+	}
+}
+
+unsigned char * Texture::LoadTexture(const char * imgPath, int * width, int * height, int* glFormat)
+{
+	stbi_set_flip_vertically_on_load(true);
+
+	int nrChannels;
+	unsigned char* data = stbi_load(imgPath, width, height, &nrChannels, 0);
+	if (data)
+	{
+		if (nrChannels == 1)
+			*glFormat = GL_RED;
+		else if (nrChannels == 3)
+			*glFormat = GL_RGB;
+		else if (nrChannels == 4)
+			*glFormat = GL_RGBA;
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+		*glFormat = GL_RED;
+	}
+
+	return data;
 }

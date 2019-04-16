@@ -1,7 +1,11 @@
 #include "LoadManager.h"
 #include "ObjectBuilder.h"
 #include "RenderManager.h"
+#include "RenderPipeline.h"
 #include "RenderStage.h"
+#include "ShadowMapRenderer.h"
+
+RenderObjectStage::RenderObjectStage() {}
 
 IFrameBuffer * RenderObjectStage::Render(IFrameBuffer * inputFrameBuffer, bool isFinal)
 {
@@ -60,5 +64,24 @@ IFrameBuffer * PostProcessingStage::Render(IFrameBuffer * inputFrameBuffer, bool
 	{
 		outputFrameBuffer->Unbind();
 	}
+	return outputFrameBuffer;
+}
+
+RenderShadowMapStage::RenderShadowMapStage()
+{
+	shadowMapShader = new Shader("Shaders/shadowMap.vs", "Shaders/shadowMap.fs");
+	outputFrameBuffer = new FrameBuffer();
+	shadowMapMaterial = new Material(shadowMapShader);
+	quad = ObjectBuilder::CreateObject(LoadManager::getInstance().LoadGeometryData("quad.mesh"), shadowMapMaterial, 4000, glm::vec3(0.0f, 0.0f, -0.0f));
+}
+
+IFrameBuffer * RenderShadowMapStage::Render(IFrameBuffer * inputFrameBuffer, bool isFinal)
+{
+	glDisable(GL_DEPTH_TEST);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	shadowMapMaterial->setTexture("shadowMap", ShadowMapRenderer::getInstance().GetShadowMap());
+	quad->draw(RenderManager::getInstance().renderingCamera);
+
 	return outputFrameBuffer;
 }

@@ -7,6 +7,7 @@
 #include "LightManager.h"
 #include "Material.h"
 #include "MeshFilter.h"
+#include "Shader.h"
 #include "Transform.h"
 
 enum PolygonMode
@@ -30,7 +31,7 @@ public:
 	Material* GetMaterial();
 	void SetRenderQueue(int renderQueue);
 	int GetRenderQueue();
-	void Draw(Camera* camera);
+	void Draw(Camera* camera, Shader* globalShader = nullptr);
 private:
 	int renderQueue;
 	Material* material;

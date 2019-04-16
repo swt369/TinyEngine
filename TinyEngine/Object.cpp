@@ -1,4 +1,5 @@
 #include "Object.h"
+#include "MeshRenderer.h"
 
 Object::Object(int id) 
 {

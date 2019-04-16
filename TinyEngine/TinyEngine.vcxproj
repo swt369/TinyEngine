@@ -148,6 +148,7 @@
     <ClCompile Include="RenderPipeline.cpp" />
     <ClCompile Include="RenderStage.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ShadowMapRenderer.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="StringUtil.cpp" />
     <ClCompile Include="SystemSettings.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="RenderPipeline.h" />
     <ClInclude Include="RenderStage.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="ShadowMapRenderer.h" />
     <ClInclude Include="StringUtil.h" />
     <ClInclude Include="SystemSettings.h" />
     <ClInclude Include="Texture.h" />

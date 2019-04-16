@@ -35,7 +35,7 @@ public:
 	void setSpecularTexture(int index, Texture* value);
 	void setCubemap(string key, Cubemap* value);
 
-	void Use();
+	void Use(Shader* globalShader = nullptr);
 private:
 	static const string AMBIENT_NAME;
 	static const string DIFFUSE_NAME;

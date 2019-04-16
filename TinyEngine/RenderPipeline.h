@@ -20,9 +20,9 @@ private:
 	FrameBuffer* initialFrameBuffer;
 	MultisampleFrameBuffer* initialMultisampleFrameBuffer;
 
-	IRenderStage* renderObjectStage;
-	IRenderStage* blitStage;
-	IRenderStage* postProcessingStage;
+	RenderObjectStage* renderObjectStage;
+	BlitStage* blitStage;
+	PostProcessingStage* finalStage;
 
 	bool isMSAAEnabled = true;
 };

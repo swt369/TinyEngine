@@ -22,18 +22,24 @@ class Camera
 public:
 	static Camera* GetWorldCamera();
 
-	glm::vec3 worldUp;
+	bool isPerspective;
 
-	float yaw;
-	float pitch;
-
-	glm::vec3 position;
+	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::vec3 forward;
 	glm::vec3 right;
 	glm::vec3 up;
+	float yaw = 0.0f;
+	float pitch = 0.0f;
 
 	float fov = 45.0f;
-	float aspectRatio;
+	float aspectRatio = (float)SystemSettings::WINDOW_WIDTH / (float)SystemSettings::WINDOW_HEIGHT;
+
+	float orthoLeft = -10.0f;
+	float orthoRight = 10.0f;
+	float orthoBottom = -10.0f;
+	float orthoUp = 10.0f;
+
 	float nearPlane = 0.1f;
 	float farPlane = 100.0f;
 
@@ -41,7 +47,7 @@ public:
 	float mouseSensitivity = 0.1f;
 	float scrollSensitivity = 0.1f;
 
-	Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch, float aspectRatio);
+	Camera(bool isPerspective = true);
 
 	glm::mat4 GetViewMatrix();
 	glm::mat4 GetProjectionMatrix();

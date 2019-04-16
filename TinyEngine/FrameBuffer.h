@@ -3,7 +3,15 @@
 
 #include <glad/glad.h>
 
+#include "SystemSettings.h"
 #include "Texture.h"
+
+enum BufferSetting
+{
+	NON,
+	USE_TEXTURE,
+	USE_RBO,
+};
 
 class IFrameBuffer
 {
@@ -15,13 +23,18 @@ public:
 	virtual void BindDrawOnly() = 0;
 	virtual void UnbindDrawOnly() = 0;
 	virtual void Delete() = 0;
+
 	ITexture* colorBuffer;
+	ITexture* depthBuffer;
+	ITexture* stencilBuffer;
+	ITexture* depthAndStencilBuffer;
 };
 
 class FrameBuffer : public IFrameBuffer
 {
 public:
-	FrameBuffer();
+	FrameBuffer(int width = SystemSettings::WINDOW_WIDTH, int height = SystemSettings::WINDOW_HEIGHT, 
+		BufferSetting colorBufferSetting = USE_TEXTURE, BufferSetting depthBufferSetting = USE_RBO, BufferSetting stencilBufferSetting = USE_RBO, bool combineDepthAndStencil = true);
 
 	void Bind() override;
 	void Unbind() override;
@@ -32,7 +45,17 @@ public:
 	void Delete() override;
 private:
 	unsigned int FBO;
-	unsigned int RBO;
+
+	unsigned int colorRBO;
+	unsigned int depthRBO;
+	unsigned int stencilRBO;
+	unsigned int depthAndStencilRBO;
+
+	void CreateFrameBufferInternal(int width, int height, 
+		BufferSetting colorBufferSetting, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting, bool combineDepthAndStencil);
+	void CreateAndBindRenderBufferInternal(unsigned int* RBO, int width, int height, int glFormat, int glAttachment);
+	void CreateAndBindTextureInternal(ITexture** texture, int glAttachment, int width, int height,
+		int glInternalFormat, int glFormat, int glDatatype = GL_UNSIGNED_BYTE, int wrapMethodX = GL_REPEAT, int wrapMethodY = GL_REPEAT);
 };
 
 #endif // !FRAME_BUFFER_H

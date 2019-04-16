@@ -2,17 +2,12 @@
 
 Camera* Camera::GetWorldCamera()
 {
-	static Camera* camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f, (float)SystemSettings::WINDOW_WIDTH / (float)SystemSettings::WINDOW_HEIGHT);
+	static Camera* camera = new Camera();
 	return camera;
 }
 
-Camera::Camera(glm::vec3 position, glm::vec3 worldUp, float yaw, float pitch, float aspectRatio)
+Camera::Camera(bool isPerspective) : isPerspective(isPerspective)
 {
-	this->position = position;
-	this->worldUp = worldUp;
-	this->yaw = yaw;
-	this->pitch = pitch;
-	this->aspectRatio = aspectRatio;
 	UpdateCameraVectors();
 }
 
@@ -23,7 +18,7 @@ glm::mat4 Camera::GetViewMatrix()
 
 glm::mat4 Camera::GetProjectionMatrix()
 {
-	return glm::perspective(glm::radians(fov), aspectRatio, nearPlane, farPlane);
+	return isPerspective ? glm::perspective(glm::radians(fov), aspectRatio, nearPlane, farPlane) : glm::ortho(orthoLeft, orthoRight, orthoBottom, orthoUp, nearPlane, farPlane);
 }
 
 void Camera::ProcessKeyboard(Direction dir, float deltaTime)

@@ -6,16 +6,19 @@ RenderPipeline::RenderPipeline()
 	initialMultisampleFrameBuffer = new MultisampleFrameBuffer(4);
 
 	renderObjectStage = new RenderObjectStage();
-	stages.push_back(renderObjectStage);
 	blitStage = new BlitStage();
+	finalStage = new PostProcessingStage(new Shader("Shaders/postprocessing.vs", "Shaders/postprocessing_nothing.fs"));
+
+	stages.push_back(renderObjectStage);
 	stages.push_back(blitStage);
-	postProcessingStage = new PostProcessingStage(new Shader("postprocessing.vs", "postprocessing_nothing.fs"));
-	stages.push_back(postProcessingStage);
+	stages.push_back(finalStage);
+
+	//stages.push_back(new RenderShadowMapStage());
 }
 
 void RenderPipeline::Render()
 {
-	IFrameBuffer* nextFrameBuffer;
+	IFrameBuffer* nextFrameBuffer = nullptr;
 	if (isMSAAEnabled)
 	{
 		nextFrameBuffer = initialMultisampleFrameBuffer;

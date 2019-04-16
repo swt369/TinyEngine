@@ -70,6 +70,11 @@ void processInput(Camera* camera, GLFWwindow* pWindow, float deltaTime)
 	{
 		RenderManager::getInstance().SetMSAA(false);
 	}
+
+	if (glfwGetKey(pWindow, GLFW_KEY_F3) == GLFW_PRESS)
+	{
+		Camera::GetWorldCamera()->isPerspective = !Camera::GetWorldCamera()->isPerspective;
+	}
 }
 
 void processScroll(GLFWwindow* pWindow, double xoffset, double yoffset)
@@ -123,10 +128,24 @@ int main()
 	glfwSetCursorPosCallback(pWindow, processMouseMove);
 	glfwSetScrollCallback(pWindow, processScroll);
 
-	Shader shader("normal.vs", "normal.fs");
+	Shader shader("Shaders/phong.vs", "Shaders/phong.fs");
+	Texture woodTexture("../Resources/wood.png");
 	Material material(&shader);
+	material.setTexture("mainTex", &woodTexture);
 	Geometry* mesh = LoadManager::getInstance().LoadGeometryData("cube.mesh");
-	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(5.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, 3.0f, 0.0f), glm::vec3(0.0f), glm::vec3(20.0f, 0.1f, 20.0f));
+	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, 1.5f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(2.0f, 0.0f, 1.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(-5.0f, -0.5f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(-5.0f, 0.0f, 2.0f), glm::vec3(20.0f, 0.0f, 80.0f), glm::vec3(1.0f));
+	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(20.0f, 0.1f, 20.0f));
+
+	Shader shader2("Shaders/normal.vs", "Shaders/normal.fs");
+	Material material2(&shader2);
+	ObjectBuilder::CreateObject(mesh, &material2, 1000, glm::vec3(-2.0f, 4.0f, -1.0f), glm::vec3(0.0f), glm::vec3(0.1f));
+	ObjectBuilder::CreateObject(mesh, &material2, 1000, glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.1f));
+
+	LightManager::getInstance().registerLight(new DirectionalLight(glm::vec3(2.0f, -4.0f, 1.0f)));
 
 	RenderManager::getInstance().Prepare();
 

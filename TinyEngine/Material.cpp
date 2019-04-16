@@ -77,42 +77,43 @@ void Material::setCubemap(string key, Cubemap * value)
 	cubemapMap[key] = value;
 }
 
-void Material::Use()
+void Material::Use(Shader* globalShader)
 {
-	if (shader == nullptr)
+	Shader* shaderToBeUsed = globalShader != nullptr ? globalShader : shader;
+	if (shaderToBeUsed == nullptr)
 	{
 		return;
 	}
 
-	shader->use();
+	shaderToBeUsed->use();
 	for (map<string, int>::const_iterator it = intMap.begin(); it != intMap.end(); it++)
 	{
-		shader->setInt(it->first, it->second);
+		shaderToBeUsed->setInt(it->first, it->second);
 	}
 
 	for (map<string, float>::const_iterator it = floatMap.begin(); it != floatMap.end(); it++)
 	{
-		shader->setFloat(it->first, it->second);
+		shaderToBeUsed->setFloat(it->first, it->second);
 	}
 
 	for (map<string, bool>::const_iterator it = boolMap.begin(); it != boolMap.end(); it++)
 	{
-		shader->setBool(it->first, it->second);
+		shaderToBeUsed->setBool(it->first, it->second);
 	}
 
 	for (map<string, glm::vec3>::const_iterator it = vec3Map.begin(); it != vec3Map.end(); it++)
 	{
-		shader->setVec3(it->first, it->second);
+		shaderToBeUsed->setVec3(it->first, it->second);
 	}
 
 	for (map<string, glm::mat3>::const_iterator it = mat3Map.begin(); it != mat3Map.end(); it++)
 	{
-		shader->setMat3(it->first, it->second);
+		shaderToBeUsed->setMat3(it->first, it->second);
 	}
 
 	for (map<string, glm::mat4>::const_iterator it = mat4Map.begin(); it != mat4Map.end(); it++)
 	{
-		shader->setMat4(it->first, it->second);
+		shaderToBeUsed->setMat4(it->first, it->second);
 	}
 
 	int curTextureIndex = 0;
@@ -121,20 +122,20 @@ void Material::Use()
 		string name = it->first;
 		Texture* texture = it->second;
 		texture->Bind(curTextureIndex);
-		shader->setInt(name, curTextureIndex++);
+		shaderToBeUsed->setInt(name, curTextureIndex++);
 	}
 	for (map<string, Cubemap*>::const_iterator it = cubemapMap.begin(); it != cubemapMap.end(); it++)
 	{
 		string name = it->first;
 		Cubemap* cubemap = it->second;
 		cubemap->Bind(curTextureIndex);
-		shader->setInt(name, curTextureIndex++);
+		shaderToBeUsed->setInt(name, curTextureIndex++);
 	}
 
-	shader->setVec3(getKey(AMBIENT_NAME), ambient);
-	shader->setVec3(getKey(DIFFUSE_NAME), diffuse);
-	shader->setVec3(getKey(SPECULAR_NAME), specular);
-	shader->setFloat(getKey(SHININESS_NAME), shininess);
+	shaderToBeUsed->setVec3(getKey(AMBIENT_NAME), ambient);
+	shaderToBeUsed->setVec3(getKey(DIFFUSE_NAME), diffuse);
+	shaderToBeUsed->setVec3(getKey(SPECULAR_NAME), specular);
+	shaderToBeUsed->setFloat(getKey(SHININESS_NAME), shininess);
 }
 
 string Material::getKey(string key)

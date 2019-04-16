@@ -6,15 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Camera.h"
 #include "Component.h"
 #include "ComponentManager.h"
-#include "Geometry.h"
-#include "LightManager.h"
-#include "Material.h"
-#include "MeshRenderer.h"
-#include "Shader.h"
-#include "Texture.h"
 #include "Transform.h"
 
 class Object

@@ -14,11 +14,13 @@ using namespace std;
 #include "FrameBuffer.h"
 #include "MeshRenderer.h"
 #include "RenderPipeline.h"
+#include "Shader.h"
 #include "SystemSettings.h"
 
 class RenderManager
 {
 	friend class RenderObjectStage;
+	friend class ShadowMapRenderer;
 public:
 	static const int DEFAULT_RENDER_QUEUE = 1000;
 	static const int OPAQUE_RENDER_QUEUE_MAXIMUM = 1999;
@@ -46,7 +48,7 @@ private:
 	RenderManager();
 
 	void SortRenderQueue();
-	void RenderObjects();
+	void RenderObjects(Shader* globalShader = nullptr);
 };
 
 #endif // !RENDER_MANAGER_H

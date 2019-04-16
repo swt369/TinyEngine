@@ -11,7 +11,7 @@ const glm::vec3 DEFAULT_SPECULAR = glm::vec3(1.0f, 1.0f, 1.0f);
 const string DirectionalLight::DIRECTIONAL_LIGHT_NAME = "directionalLights";
 const string DirectionalLight::DIRECTIONAL_LIGHT_COUNT_NAME = "directionalLightCount";
 const string DirectionalLight::DIRECTION_NAME = "direction";
-const glm::vec3 DirectionalLight::DEFAULT_DIRECTION = glm::vec3(1.0f, cos(glm::radians(135.0f)), 1.0f);
+const glm::vec3 DirectionalLight::DEFAULT_DIRECTION = glm::vec3(-1.0f, -1.0f, -1.0f);
 
 const string PointLight::POINT_LIGHT_NAME = "pointLights";
 const string PointLight::POINT_LIGHT_COUNT_NAME = "pointLightCount";
