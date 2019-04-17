@@ -25,9 +25,13 @@ public:
 	void setRotation(glm::vec3 rotation);
 	void setScale(glm::vec3 scale);
 
-	virtual glm::mat4 getLocalToClipMatrix(Camera* camera);
-	virtual glm::mat4 getModelMatrix();
-	virtual glm::mat3 getNormalMatrix();
+	glm::vec3 getForward();
+	glm::vec3 getUp();
+	glm::vec3 getRight();
+
+	glm::mat4 getLocalToClipMatrix(Camera* camera);
+	glm::mat4 getModelMatrix();
+	glm::mat3 getNormalMatrix();
 private:
 	glm::mat4 localToWorldMatrix;
 	void updateLocalToWorldMatrix();

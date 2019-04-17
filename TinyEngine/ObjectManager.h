@@ -18,8 +18,12 @@ public:
 	bool AddObject(Object* object);
 	bool DeleteObject(Object* object);
 	void ForEach(Handler handler);
+
+	Object* Next();
 private:
 	map<int, Object*> objectMap;
+
+	int curId = 0;
 
 	ObjectManager();
 };

@@ -16,7 +16,7 @@ public:
 	static ComponentFactory& getInstance();
 
 	bool Register(std::string key, Builder builder);
-	template <typename Derived> Component* Create(Object* object);
+	template <typename Derived> Derived* Create(Object* object);
 	Component* Create(std::string key, Object* object);
 
 	template <typename Derived> Component* ComponentBuilder(Object* object) { return new Derived(object); }
@@ -27,8 +27,8 @@ private:
 };
 
 template<typename Derived>
-inline Component * ComponentFactory::Create(Object* object)
+inline Derived * ComponentFactory::Create(Object* object)
 {
-	return (Component*)(new Derived(object));
+	return new Derived(object);
 }
 #endif // !COMPONENT_FACTORY_H

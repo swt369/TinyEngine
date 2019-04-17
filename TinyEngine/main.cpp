@@ -26,6 +26,7 @@ using namespace std;
 #include "Texture.h"
 #include "Object.h"
 #include "ObjectBuilder.h"
+#include "ObjectController.h"
 #include "ObjectManager.h"
 #include "Vertex.h"
 
@@ -43,22 +44,22 @@ void processInput(Camera* camera, GLFWwindow* pWindow, float deltaTime)
 
 	if (glfwGetKey(pWindow, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		camera->ProcessKeyboard(FORWARD, deltaTime);
+		ObjectController::getInstance().ProcessKeyboard(FORWARD, deltaTime);
 	}
 
 	if (glfwGetKey(pWindow, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		camera->ProcessKeyboard(BACKWARD, deltaTime);
+		ObjectController::getInstance().ProcessKeyboard(BACKWARD, deltaTime);
 	}
 
 	if (glfwGetKey(pWindow, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		camera->ProcessKeyboard(LEFT, deltaTime);
+		ObjectController::getInstance().ProcessKeyboard(LEFT, deltaTime);
 	}
 
 	if (glfwGetKey(pWindow, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		camera->ProcessKeyboard(RIGHT, deltaTime);
+		ObjectController::getInstance().ProcessKeyboard(RIGHT, deltaTime);
 	}
 
 	if (glfwGetKey(pWindow, GLFW_KEY_F1) == GLFW_PRESS)
@@ -75,11 +76,21 @@ void processInput(Camera* camera, GLFWwindow* pWindow, float deltaTime)
 	{
 		Camera::GetWorldCamera()->isPerspective = !Camera::GetWorldCamera()->isPerspective;
 	}
+
+	if (glfwGetKey(pWindow, GLFW_KEY_TAB) == GLFW_PRESS)
+	{
+		ObjectController::getInstance().SetTarget(ObjectManager::getInstance().Next());
+	}
+
+	if (glfwGetKey(pWindow, GLFW_KEY_Q) == GLFW_PRESS)
+	{
+		ObjectController::getInstance().SetTarget(Camera::GetWorldCamera()->GetOwner());
+	}
 }
 
 void processScroll(GLFWwindow* pWindow, double xoffset, double yoffset)
 {
-	Camera::GetWorldCamera()->ProcessScroll((float)yoffset);
+	ObjectController::getInstance().ProcessScroll((float)yoffset);
 }
 
 float lastMouseX;
@@ -93,7 +104,7 @@ void processMouseMove(GLFWwindow* pWindow, double xPos, double yPos)
 	}
 	else
 	{
-		Camera::GetWorldCamera()->ProcessMouse(xPos - lastMouseX, yPos - lastMouseY);
+		ObjectController::getInstance().ProcessMouse(xPos - lastMouseX, yPos - lastMouseY);
 	}
 
 	lastMouseX = (float)xPos;
@@ -142,10 +153,15 @@ int main()
 
 	Shader shader2("Shaders/normal.vs", "Shaders/normal.fs");
 	Material material2(&shader2);
-	ObjectBuilder::CreateObject(mesh, &material2, 1000, glm::vec3(-2.0f, 4.0f, -1.0f), glm::vec3(0.0f), glm::vec3(0.1f));
+	ObjectBuilder::CreateObject(mesh, &material2, 1000, glm::vec3(-8.0f, 16.0f, -4.0f), glm::vec3(0.0f), glm::vec3(0.1f));
 	ObjectBuilder::CreateObject(mesh, &material2, 1000, glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.1f));
 
-	LightManager::getInstance().registerLight(new DirectionalLight(glm::vec3(2.0f, -4.0f, 1.0f)));
+	Object* mainLightObj = ObjectBuilder::CreateObject(glm::vec3(16.0f, 16.0f, 16.0f), glm::vec3(135.0f, 135.0f, 135.0f));
+	LightManager::getInstance().registerLight(mainLightObj->AddComponent<DirectionalLight>());
+
+	Object* cameraObj = ObjectBuilder::CreateObject(glm::vec3(0.0f));
+	cameraObj->AddComponent<Camera>();
+	ObjectController::getInstance().SetTarget(cameraObj);
 
 	RenderManager::getInstance().Prepare();
 

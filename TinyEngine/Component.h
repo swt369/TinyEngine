@@ -5,6 +5,7 @@
 using namespace std;
 
 class Object;
+class Transform;
 class Component
 {
 public:
@@ -12,6 +13,7 @@ public:
 	virtual string GetComponentName() = 0;
 
 	Object* GetOwner();
+	Transform* GetTransform();
 	template <typename Derived> Component* AddComponent();
 	Component* AddComponent(string name);
 	Component* GetComponent(string name);

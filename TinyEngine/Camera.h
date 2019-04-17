@@ -1,36 +1,27 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <stdio.h>
+#include <vector>
+using namespace std;
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Component.h"
 #include "SystemSettings.h"
 
-enum Direction
-{
-	FORWARD,
-	BACKWARD,
-	LEFT,
-	RIGHT
-};
-
-class Camera
+class Camera : public Component
 {
 public:
+	const static string CAMERA_NAME;
+	static vector<Camera*> cameras;
+
 	static Camera* GetWorldCamera();
 
-	bool isPerspective;
+	bool isPerspective = true;
 
-	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::vec3 forward;
-	glm::vec3 right;
-	glm::vec3 up;
-	float yaw = 0.0f;
-	float pitch = 0.0f;
 
 	float fov = 45.0f;
 	float aspectRatio = (float)SystemSettings::WINDOW_WIDTH / (float)SystemSettings::WINDOW_HEIGHT;
@@ -42,20 +33,14 @@ public:
 
 	float nearPlane = 0.1f;
 	float farPlane = 100.0f;
+	
+	float depth = 0.0f;
 
-	float speed = 5.0f;
-	float mouseSensitivity = 0.1f;
-	float scrollSensitivity = 0.1f;
+	Camera(Object* object);
 
-	Camera(bool isPerspective = true);
+	string GetComponentName() override;
 
 	glm::mat4 GetViewMatrix();
 	glm::mat4 GetProjectionMatrix();
-	void ProcessKeyboard(Direction dir, float deltaTime);
-	void ProcessMouse(float offsetX, float offsetY);
-	void ProcessScroll(float offset);
-	void UpdateCameraVectors();
-	void PrintInfo();
 };
-
 #endif // !CAMERA_H

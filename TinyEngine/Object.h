@@ -15,16 +15,16 @@ class Object
 public:
 	int id;
 
-	Transform* transform;
-
 	Object(int id);
 
 	void draw(Camera* camera);
 
-	template <typename Derived> Component* AddComponent();
+	template <typename Derived> Derived* AddComponent();
 	Component* AddComponent(string name);
 	Component* GetComponent(string name);
 	void RemoveComponent(string name);
+
+	Transform* GetTransform();
 protected:
 
 private:
@@ -32,7 +32,7 @@ private:
 };
 
 template<typename Derived>
-inline Component * Object::AddComponent()
+inline Derived * Object::AddComponent()
 {
 	return componentManager->AddComponent<Derived>();
 }

@@ -7,17 +7,17 @@
 #include <string>
 using namespace std;
 
+#include "Component.h"
 #include "Shader.h"
-#include "StringUtil.h"
 
-class Light
+class Light : public Component
 {
 public:
-	glm::vec3 ambient;
-	glm::vec3 diffuse;
-	glm::vec3 specular;
+	glm::vec3 ambient = DEFAULT_AMBIENT;
+	glm::vec3 diffuse = DEFAULT_DIFFUSE;
+	glm::vec3 specular = DEFAULT_SPECULAR;
 
-	Light();
+	Light(Object* object);
 
 	virtual void use(Shader* shader, int id);
 	virtual string getTypeName() = 0;
@@ -28,42 +28,46 @@ private:
 	static const string AMBIENT_NAME;
 	static const string DIFFUSE_NAME;
 	static const string SPECULAR_NAME;
+
+	static const glm::vec3 DEFAULT_AMBIENT;
+	static const glm::vec3 DEFAULT_DIFFUSE;
+	static const glm::vec3 DEFAULT_SPECULAR;
 };
 
 class DirectionalLight : public Light 
 {
 public:
-	glm::vec3 direction;
-
-	DirectionalLight(glm::vec3 direction = DEFAULT_DIRECTION);
-
-	virtual void use(Shader* shader, int id);
-	virtual string getTypeName();
-	virtual string getTypeCountName();
-private:
 	static const string DIRECTIONAL_LIGHT_NAME;
+
+	DirectionalLight(Object* object);
+
+	string GetComponentName() override;
+	void use(Shader* shader, int id) override;
+	string getTypeName() override;
+	string getTypeCountName() override;
+private:
+	static const string DIRECTIONAL_LIGHT_ARRAY_NAME;
 	static const string DIRECTIONAL_LIGHT_COUNT_NAME;
-
 	static const string DIRECTION_NAME;
-
-	static const glm::vec3 DEFAULT_DIRECTION;
 };
 
 class PointLight : public Light
 {
 public:
-	glm::vec3 position;
-	float constant;
-	float linear;
-	float quadratic;
-
-	PointLight(glm::vec3 position = DEFAULT_POSITION, float constant = DEFAULT_CONSTANT, float linear = DEFAULT_LINEAR, float quadratic = DEFAULT_QUADRATIC);
-
-	virtual void use(Shader* shader, int id);
-	virtual string getTypeName();
-	virtual string getTypeCountName();
-private:
 	static const string POINT_LIGHT_NAME;
+
+	float constant = DEFAULT_CONSTANT;
+	float linear = DEFAULT_LINEAR;
+	float quadratic = DEFAULT_QUADRATIC;
+
+	PointLight(Object* object);
+
+	string GetComponentName() override;
+	void use(Shader* shader, int id) override;
+	string getTypeName() override;
+	string getTypeCountName() override;
+private:
+	static const string POINT_LIGHT_ARRAY_NAME;
 	static const string POINT_LIGHT_COUNT_NAME;
 
 	static const string POSITION_NAME;
@@ -71,7 +75,6 @@ private:
 	static const string LINEAR_NAME;
 	static const string QUADRATIC_NAME;
 	
-	static const glm::vec3 DEFAULT_POSITION;
 	static const float DEFAULT_CONSTANT;
 	static const float DEFAULT_LINEAR;
 	static const float DEFAULT_QUADRATIC;
@@ -80,19 +83,19 @@ private:
 class SpotLight : public Light 
 {
 public:
-	glm::vec3 position;
-	glm::vec3 direction;
-	float innerCutoffAngle;
-	float outerCutoffAngle;
-
-	SpotLight(glm::vec3 position = DEFAULT_POSITION, glm::vec3 direction = DEFAULT_DIREECTION,
-		float innerCutoffAngle = DEFAULT_INNER_CUTOFF_ANGLE, float outerCutoffAngle = DEFAULT_OUTER_CUTOFF_ANGLE);
-
-	virtual void use(Shader* shader, int id);
-	virtual string getTypeName();
-	virtual string getTypeCountName();
-private:
 	static const string SPOT_LIGHT_NAME;
+
+	float innerCutoffAngle = DEFAULT_INNER_CUTOFF_ANGLE;
+	float outerCutoffAngle = DEFAULT_OUTER_CUTOFF_ANGLE;
+
+	SpotLight(Object* object);
+
+	string GetComponentName() override;
+	void use(Shader* shader, int id) override;
+	string getTypeName() override;
+	string getTypeCountName() override;
+private:
+	static const string SPOT_LIGHT_ARRAY_NAME;
 	static const string SPOT_LIGHT_COUNT_NAME;
 
 	static const string POSITION_NAME;
@@ -100,8 +103,6 @@ private:
 	static const string INNER_CUTOFF_NAME;
 	static const string OUTER_CUTOFF_NAME;
 
-	static const glm::vec3 DEFAULT_POSITION;
-	static const glm::vec3 DEFAULT_DIREECTION;
 	static const float DEFAULT_INNER_CUTOFF_ANGLE;
 	static const float DEFAULT_OUTER_CUTOFF_ANGLE;
 };

@@ -32,3 +32,8 @@ void Object::RemoveComponent(string name)
 {
 	componentManager->RemoveComponent(name);
 }
+
+Transform * Object::GetTransform()
+{
+	return (Transform*)GetComponent(Transform::TRANSFORM_NAME);
+}

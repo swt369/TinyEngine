@@ -37,4 +37,15 @@ void ObjectManager::ForEach(Handler handler)
 	}
 }
 
+Object * ObjectManager::Next()
+{
+	if (MapUtil::Contains(&objectMap, ++curId))
+	{
+		return objectMap[curId];
+	}
+
+	curId = 0;
+	return objectMap[curId];
+}
+
 ObjectManager :: ObjectManager() {}

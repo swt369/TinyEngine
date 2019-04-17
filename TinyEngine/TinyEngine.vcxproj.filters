@@ -120,6 +120,9 @@
     <ClCompile Include="ShadowMapRenderer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectController.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -222,6 +225,9 @@
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="ShadowMapRenderer.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectController.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

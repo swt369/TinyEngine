@@ -24,14 +24,19 @@ Object * ObjectBuilder::CreateObjectInternal(Geometry * geometry, Material * mat
 	transform->setPosition(position);
 	transform->setRotation(rotation);
 	transform->setScale(scale);
-	object->transform = transform;
 
-	MeshFilter* meshFilter = (MeshFilter*)(object->AddComponent<MeshFilter>());
-	meshFilter->SetTarget(geometry);
+	if (geometry != nullptr)
+	{
+		MeshFilter* meshFilter = (MeshFilter*)(object->AddComponent<MeshFilter>());
+		meshFilter->SetTarget(geometry);
+	}
 
-	MeshRenderer* meshRenderer = (MeshRenderer*)(object->AddComponent<MeshRenderer>());
-	meshRenderer->SetMaterial(material);
-	meshRenderer->SetRenderQueue(renderQueue);
+	if (material != nullptr)
+	{
+		MeshRenderer* meshRenderer = (MeshRenderer*)(object->AddComponent<MeshRenderer>());
+		meshRenderer->SetMaterial(material);
+		meshRenderer->SetRenderQueue(renderQueue);
+	}
 
 	ObjectManager::getInstance().AddObject(object);
 	return object;

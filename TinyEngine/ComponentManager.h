@@ -16,7 +16,7 @@ class ComponentManager
 public:
 	ComponentManager(Object* master);
 
-	template <typename Derived> Component* AddComponent();
+	template <typename Derived> Derived* AddComponent();
 	Component* AddComponent(string name);
 	Component* GetComponent(string name);
 	void RemoveComponent(string name);
@@ -30,9 +30,11 @@ private:
 };
 
 template<typename Derived>
-inline Component * ComponentManager::AddComponent()
+inline Derived * ComponentManager::AddComponent()
 {
-	return AddComponentCore(ComponentFactory::getInstance().Create<Derived>(master));
+	Derived* res = ComponentFactory::getInstance().Create<Derived>(master);
+	AddComponentCore((Component*)res);
+	return res;
 }
 
 #endif // !COMPONENT_MANAGER_H

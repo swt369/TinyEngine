@@ -123,7 +123,7 @@ void RenderManager::SortRenderQueue()
 			auto curQueue = i->second;
 			for (auto j = curQueue->begin(); j != curQueue->end(); j++)
 			{
-				float distance = glm::length(j->second->GetOwner()->transform->position - renderingCamera->position);
+				float distance = glm::length(j->second->GetTransform()->position - renderingCamera->GetTransform()->position);
 				distanceMap[distance] = j->second;
 			}
 			i++;

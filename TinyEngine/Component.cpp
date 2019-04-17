@@ -1,5 +1,6 @@
 #include "Component.h"
 #include "Object.h"
+#include "Transform.h"
 
 Component::Component(Object* object)
 {
@@ -11,6 +12,11 @@ void Component::Update() {}
 Object * Component::GetOwner()
 {
 	return object;
+}
+
+Transform * Component::GetTransform()
+{
+	return GetOwner()->GetTransform();
 }
 
 template<typename Derived>
