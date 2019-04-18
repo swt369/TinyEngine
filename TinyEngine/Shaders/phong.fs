@@ -95,10 +95,10 @@ vec3 calcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 	vec3 lightDir = normalize(-light.direction);
 	vec3 reflectDir = reflect(-lightDir, normal);
 	
-	vec3 ambient = light.ambient * material.ambient * texture(texture_diffuse_0, uv).xyz;
+	vec3 ambient = light.ambient * material.ambient;
 	
 	float diff = max(dot(lightDir, normal), 0.0);
-	vec3 diffuse = diff * light.diffuse * material.diffuse;
+	vec3 diffuse = diff * light.diffuse * material.diffuse * texture(texture_diffuse_0, uv).xyz;
 	
 	float specStrength = pow(max(dot(reflectDir, viewDir), 0.0), material.shininess);
 	vec3 specular = specStrength * light.specular * material.specular;

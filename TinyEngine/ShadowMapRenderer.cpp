@@ -3,6 +3,9 @@
 #include "RenderManager.h"
 #include "ShadowMapRenderer.h"
 
+const int ShadowMapRenderer::DEFAULT_SHADOW_MAP_WIDTH = 1280;
+const int ShadowMapRenderer::DEFAULT_SHADOW_MAP_HEIGHT = 720;
+
 const float ShadowMapRenderer::DEFAULT_ORTHO_LEFT = -20.0f;
 const float ShadowMapRenderer::DEFAULT_ORTHO_RIGHT = 20.0f;
 const float ShadowMapRenderer::DEFAULT_ORTHO_BOTTOM = -20.0f;
@@ -15,7 +18,7 @@ const float ShadowMapRenderer::DEFAULT_DEPTH = -10.0f;
 ShadowMapRenderer::ShadowMapRenderer()
 {
 	shadowMapShader = new Shader("Shaders/depthMap.vs", "Shaders/depthMap.fs");
-	shadowMapFrameBuffer = new FrameBuffer(1280, 720, NON, USE_TEXTURE, NON);
+	shadowMapFrameBuffer = new FrameBuffer(DEFAULT_SHADOW_MAP_WIDTH, DEFAULT_SHADOW_MAP_HEIGHT, NON, USE_TEXTURE, NON);
 
 	shadowMapCameraObj = ObjectBuilder::CreateObject(glm::vec3(0.0f));
 	shadowMapCamera = shadowMapCameraObj->AddComponent<Camera>();
@@ -46,7 +49,7 @@ void ShadowMapRenderer::RenderShadowMap()
 
 	RenderManager::getInstance().SortRenderQueue();
 	shadowMapFrameBuffer->Bind();
-	glViewport(0, 0, 1280, 720);
+	glViewport(0, 0, DEFAULT_SHADOW_MAP_WIDTH, DEFAULT_SHADOW_MAP_HEIGHT);
 	glCullFace(GL_FRONT);
 	RenderManager::getInstance().RenderObjects(shadowMapCamera, shadowMapShader);
 	glCullFace(GL_BACK);

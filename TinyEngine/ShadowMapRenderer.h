@@ -22,6 +22,9 @@ public:
 	Object* shadowMapCameraObj;
 	Camera* shadowMapCamera;
 private:
+	const static int DEFAULT_SHADOW_MAP_WIDTH;
+	const static int DEFAULT_SHADOW_MAP_HEIGHT;
+
 	const static float DEFAULT_ORTHO_LEFT;
 	const static float DEFAULT_ORTHO_RIGHT;
 	const static float DEFAULT_ORTHO_BOTTOM;

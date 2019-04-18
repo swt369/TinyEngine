@@ -158,14 +158,21 @@ int main()
 	Shader shader("Shaders/phong.vs", "Shaders/phong.fs");
 	Texture woodTexture("../Resources/wood.png");
 	Material material(&shader);
-	material.setTexture("mainTex", &woodTexture);
+	material.setTexture("texture_diffuse_0", &woodTexture);
 	Geometry* mesh = LoadManager::getInstance().LoadGeometryData("cube.mesh");
 	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, 3.0f, 0.0f), glm::vec3(0.0f), glm::vec3(20.0f, 0.1f, 20.0f));
 	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, 1.5f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
 	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(2.0f, 0.0f, 1.0f), glm::vec3(0.0f), glm::vec3(1.0f));
 	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(-5.0f, -0.5f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
 	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(-5.0f, 0.0f, 2.0f), glm::vec3(20.0f, 0.0f, 80.0f), glm::vec3(1.0f));
-	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(20.0f, 0.1f, 20.0f));
+	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(100.0f, 0.1f, 100.0f));
+
+	vector<Object*> model = LoadManager::getInstance().LoadModelData("../Resources/nanosuit/nanosuit.obj");
+	for (auto obj : model)
+	{
+		MeshRenderer* renderer = (MeshRenderer*)(obj->GetComponent(MeshRenderer::MESH_RENDERER_NAME));
+		renderer->GetMaterial()->setShader(&shader);
+	}
 
 	Object* mainLightObj = ObjectBuilder::CreateObject(glm::vec3(0.0f, 16.0f, 0.0f), glm::vec3(-45.0f, 0.0f, 0.0f));
 	Light* mainLight = mainLightObj->AddComponent<DirectionalLight>();

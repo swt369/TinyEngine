@@ -8,8 +8,8 @@ const string Material::SHININESS_NAME = "shininess";
 const string Material::DIFFUSE_TEXTURE_NAME_FMT = "texture_diffuse_%d";
 const string Material::SPECULAR_TEXTURE_NAME_FMT = "texture_specular_%d";
 
-const glm::vec3 Material::DEFAULT_AMBIENT = glm::vec3(1.0f, 0.5f, 0.31f);
-const glm::vec3 Material::DEFAULT_DIFFUSE = glm::vec3(1.0f, 0.5f, 0.31f);
+const glm::vec3 Material::DEFAULT_AMBIENT = glm::vec3(1.0f, 1.0f, 1.0f);
+const glm::vec3 Material::DEFAULT_DIFFUSE = glm::vec3(1.0f, 1.0f, 1.0f);
 const glm::vec3 Material::DEFAULT_SPECULAR = glm::vec3(0.5f, 0.5f, 0.5f);
 const float Material::DEFAULT_SHININESS = 32.0f;
 
