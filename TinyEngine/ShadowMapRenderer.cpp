@@ -1,13 +1,15 @@
+#include "LightManager.h"
 #include "ObjectBuilder.h"
 #include "RenderManager.h"
 #include "ShadowMapRenderer.h"
 
-const float ShadowMapRenderer::DEFAULT_ORTHO_LEFT = -10.0f;
-const float ShadowMapRenderer::DEFAULT_ORTHO_RIGHT = 10.0f;
-const float ShadowMapRenderer::DEFAULT_ORTHO_BOTTOM = -10.0f;
-const float ShadowMapRenderer::DEFAULT_ORTHO_UP = -10.0f;
-const float ShadowMapRenderer::DEFAULT_NEAR_PLANE = 1.0f;
-const float ShadowMapRenderer::DEFAULT_FAR_PLANE = 20.0f;
+const float ShadowMapRenderer::DEFAULT_ORTHO_LEFT = -20.0f;
+const float ShadowMapRenderer::DEFAULT_ORTHO_RIGHT = 20.0f;
+const float ShadowMapRenderer::DEFAULT_ORTHO_BOTTOM = -20.0f;
+const float ShadowMapRenderer::DEFAULT_ORTHO_UP = 20.0f;
+const float ShadowMapRenderer::DEFAULT_NEAR_PLANE = 0.1f;
+const float ShadowMapRenderer::DEFAULT_FAR_PLANE = 100.0f;
+const float ShadowMapRenderer::DEFAULT_DEPTH = -10.0f;
 
 
 ShadowMapRenderer::ShadowMapRenderer()
@@ -24,6 +26,7 @@ ShadowMapRenderer::ShadowMapRenderer()
 	shadowMapCamera->orthoUp = DEFAULT_ORTHO_UP;
 	shadowMapCamera->nearPlane = DEFAULT_NEAR_PLANE;
 	shadowMapCamera->farPlane = DEFAULT_FAR_PLANE;
+	shadowMapCamera->depth = DEFAULT_DEPTH;
 }
 
 ShadowMapRenderer & ShadowMapRenderer::getInstance()
@@ -34,18 +37,18 @@ ShadowMapRenderer & ShadowMapRenderer::getInstance()
 
 void ShadowMapRenderer::RenderShadowMap()
 {
-	float near_plane = 1.0f, far_plane = 20.0f;
-	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-	glm::vec3 lightPos(-8.0f, 16.0f, -4.0f);
-	glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-	glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-	shadowMapShader->setMat4("lightSpaceMatrix", lightSpaceMatrix);
+	Light* mainLight = LightManager::getInstance().getMainLight();
+	if (mainLight == nullptr)
+	{
+		return;
+	}
+	shadowMapCamera->GetTransform()->CopyTransform(mainLight->GetOwner());
 
 	RenderManager::getInstance().SortRenderQueue();
 	shadowMapFrameBuffer->Bind();
 	glViewport(0, 0, 1280, 720);
 	glCullFace(GL_FRONT);
-	RenderManager::getInstance().RenderObjects(shadowMapShader);
+	RenderManager::getInstance().RenderObjects(shadowMapCamera, shadowMapShader);
 	glCullFace(GL_BACK);
 	glViewport(0, 0, SystemSettings::WINDOW_WIDTH, SystemSettings::WINDOW_HEIGHT);
 

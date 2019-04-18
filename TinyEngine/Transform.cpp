@@ -1,4 +1,5 @@
 #include "Transform.h"
+#include "Object.h"
 
 const string Transform::TRANSFORM_NAME = "Transform";
 
@@ -66,7 +67,7 @@ glm::vec3 Transform::getRight()
 
 glm::mat4 Transform::getLocalToClipMatrix(Camera* camera)
 {
-	return camera->GetProjectionMatrix() * camera->GetViewMatrix() * getModelMatrix();
+	return camera->GetProjectionMatrix() * camera->GetTransform()->getViewMatrix() * getModelMatrix();
 }
 
 glm::mat4 Transform::getModelMatrix()
@@ -74,9 +75,22 @@ glm::mat4 Transform::getModelMatrix()
 	return localToWorldMatrix;
 }
 
+glm::mat4 Transform::getViewMatrix()
+{
+	return glm::lookAt(position, position + getForward(), getUp());
+}
+
 glm::mat3 Transform::getNormalMatrix()
 {
 	return glm::transpose(glm::inverse(glm::mat3(getModelMatrix())));
+}
+
+void Transform::CopyTransform(Object * target)
+{
+	Transform* targetTransform = target->GetTransform();
+	setPosition(targetTransform->position);
+	setRotation(targetTransform->rotation);
+	setScale(targetTransform->localScale);
 }
 
 void Transform::updateLocalToWorldMatrix()

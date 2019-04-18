@@ -28,12 +28,6 @@ string Camera::GetComponentName()
 	return CAMERA_NAME;
 }
 
-glm::mat4 Camera::GetViewMatrix()
-{
-	Transform* transform = GetOwner()->GetTransform();
-	return glm::lookAt(transform->position, transform->position + transform->getForward(), transform->getUp());
-}
-
 glm::mat4 Camera::GetProjectionMatrix()
 {
 	return isPerspective ? glm::perspective(glm::radians(fov), aspectRatio, nearPlane, farPlane) : glm::ortho(orthoLeft, orthoRight, orthoBottom, orthoUp, nearPlane, farPlane);

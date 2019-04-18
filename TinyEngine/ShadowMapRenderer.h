@@ -28,6 +28,7 @@ private:
 	const static float DEFAULT_ORTHO_UP;
 	const static float DEFAULT_NEAR_PLANE;
 	const static float DEFAULT_FAR_PLANE;
+	const static float DEFAULT_DEPTH;
 
 	ShadowMapRenderer();
 

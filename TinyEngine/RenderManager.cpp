@@ -8,14 +8,10 @@ RenderManager & RenderManager::getInstance()
 	return instance;
 }
 
-void RenderManager::RenderWorld(Camera* camera)
+void RenderManager::RenderWorld()
 {
-	renderingCamera = camera;
-
 	ShadowMapRenderer::getInstance().RenderShadowMap();
 	renderPipeline->Render();
-
-	renderingCamera = nullptr;
 }
 
 bool RenderManager::AddRenderer(MeshRenderer * renderer)
@@ -153,8 +149,10 @@ void RenderManager::SortRenderQueue()
 	}
 }
 
-void RenderManager::RenderObjects(Shader* globalShader)
+void RenderManager::RenderObjects(Camera* camera, Shader* globalShader)
 {
+	renderingCamera = camera;
+
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
@@ -176,4 +174,6 @@ void RenderManager::RenderObjects(Shader* globalShader)
 	{
 		renderer->Draw(renderingCamera, globalShader);
 	}
+
+	renderingCamera = nullptr;
 }

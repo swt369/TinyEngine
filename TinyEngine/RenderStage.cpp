@@ -15,7 +15,7 @@ IFrameBuffer * RenderObjectStage::Render(IFrameBuffer * inputFrameBuffer, bool i
 	{
 		inputFrameBuffer->Bind();
 	}
-	RenderManager::getInstance().RenderObjects();
+	RenderManager::getInstance().RenderObjects(Camera::GetWorldCamera());
 	if (!isFinal && inputFrameBuffer != nullptr)
 	{
 		inputFrameBuffer->Unbind();
@@ -58,7 +58,7 @@ IFrameBuffer * PostProcessingStage::Render(IFrameBuffer * inputFrameBuffer, bool
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	postProcessingMaterial->setTexture("screenTexture", (Texture*)(inputFrameBuffer->colorBuffer));
-	quad->draw(RenderManager::getInstance().renderingCamera);
+	quad->draw(Camera::GetWorldCamera());
 
 	if (!isFinal && inputFrameBuffer != nullptr)
 	{
@@ -72,16 +72,16 @@ RenderShadowMapStage::RenderShadowMapStage()
 	shadowMapShader = new Shader("Shaders/shadowMap.vs", "Shaders/shadowMap.fs");
 	outputFrameBuffer = new FrameBuffer();
 	shadowMapMaterial = new Material(shadowMapShader);
-	quad = ObjectBuilder::CreateObject(LoadManager::getInstance().LoadGeometryData("quad.mesh"), shadowMapMaterial, 4000, glm::vec3(0.0f, 0.0f, -0.0f));
+	quad = ObjectBuilder::CreateObject(LoadManager::getInstance().LoadGeometryData("quad.mesh"), shadowMapMaterial, 4000, glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
 IFrameBuffer * RenderShadowMapStage::Render(IFrameBuffer * inputFrameBuffer, bool isFinal)
 {
 	glDisable(GL_DEPTH_TEST);
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	shadowMapMaterial->setTexture("shadowMap", ShadowMapRenderer::getInstance().GetShadowMap());
-	quad->draw(RenderManager::getInstance().renderingCamera);
+	//shadowMapMaterial->setTexture("shadowMap", ShadowMapRenderer::getInstance().GetShadowMap());
+	quad->draw(Camera::GetWorldCamera());
 
 	return outputFrameBuffer;
 }

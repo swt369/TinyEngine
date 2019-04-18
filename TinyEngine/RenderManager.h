@@ -30,7 +30,7 @@ public:
 	static RenderManager& getInstance();
 
 	void Prepare();
-	void RenderWorld(Camera* camera);
+	void RenderWorld();
 	bool AddRenderer(MeshRenderer* renderer);
 	bool RemoveRenderer(MeshRenderer* renderer);
 	void SetMSAA(bool enabled);
@@ -48,7 +48,7 @@ private:
 	RenderManager();
 
 	void SortRenderQueue();
-	void RenderObjects(Shader* globalShader = nullptr);
+	void RenderObjects(Camera* camera, Shader* globalShader = nullptr);
 };
 
 #endif // !RENDER_MANAGER_H

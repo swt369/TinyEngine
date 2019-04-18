@@ -34,13 +34,12 @@ public:
 	float nearPlane = 0.1f;
 	float farPlane = 100.0f;
 	
-	float depth = 0.0f;
+	float depth = 10.0f;
 
 	Camera(Object* object);
 
 	string GetComponentName() override;
 
-	glm::mat4 GetViewMatrix();
 	glm::mat4 GetProjectionMatrix();
 };
 #endif // !CAMERA_H

@@ -17,11 +17,14 @@ public:
 	void operator=(LightManager const&) = delete;
 
 	void registerLight(Light* light);
+	void registerMainLight(Light* light);
 	void unregisterLight(Light* light);
 	void writeLightParams(Shader* shader);
+	Light* getMainLight();
 private:
 	LightManager();
 
 	map<string, set<Light*> > lightMap;
+	Light* mainLight;
 };
 #endif // !LIGHT_MANAGER_H

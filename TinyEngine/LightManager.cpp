@@ -21,6 +21,12 @@ void LightManager::registerLight(Light* light)
 	}
 }
 
+void LightManager::registerMainLight(Light * light)
+{
+	mainLight = light;
+	registerLight(light);
+}
+
 void LightManager::unregisterLight(Light * light)
 {
 	string key = light->getTypeName();
@@ -45,6 +51,11 @@ void LightManager::writeLightParams(Shader * shader)
 			shader->setInt((*(itForMap->second.begin()))->getTypeCountName(), id);
 		}
 	}
+}
+
+Light * LightManager::getMainLight()
+{
+	return mainLight;
 }
 
 LightManager::LightManager() {}

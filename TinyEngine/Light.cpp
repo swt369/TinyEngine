@@ -1,10 +1,12 @@
 #include "Light.h"
+#include "ShadowMapRenderer.h"
 #include "StringUtil.h"
 #include "Transform.h"
 
 const string Light::AMBIENT_NAME = "ambient";
 const string Light::DIFFUSE_NAME = "diffuse";
 const string Light::SPECULAR_NAME = "specular";
+const string Light::LIGHT_SPACE_MATRIX_NAME = "lightSpaceMatrix";
 
 const glm::vec3 Light::DEFAULT_AMBIENT = glm::vec3(0.1f, 0.1f, 0.1f);
 const glm::vec3 Light::DEFAULT_DIFFUSE = glm::vec3(0.5f, 0.5f, 0.5f);
@@ -46,6 +48,7 @@ void Light::use(Shader * shader, int id)
 	shader->setVec3(getKeyInArray(AMBIENT_NAME, id), ambient);
 	shader->setVec3(getKeyInArray(DIFFUSE_NAME, id), diffuse);
 	shader->setVec3(getKeyInArray(SPECULAR_NAME, id), specular);
+	shader->setMat4(getKeyInArray(LIGHT_SPACE_MATRIX_NAME, id), ShadowMapRenderer::getInstance().shadowMapCamera->GetProjectionMatrix() * GetTransform()->getViewMatrix());
 }
 
 string Light::getKeyInArray(string key, int id)

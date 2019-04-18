@@ -17,6 +17,7 @@ struct DirectionalLight
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
+	mat4 lightSpaceMatrix;
 	
 	vec3 direction;
 };
@@ -26,6 +27,7 @@ struct PointLight
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
+	mat4 lightSpaceMatrix;
 
 	vec3 position;
 	float constant;
@@ -38,6 +40,7 @@ struct SpotLight
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
+	mat4 lightSpaceMatrix;
 	
 	vec3 position;
 	vec3 direction;
@@ -100,7 +103,7 @@ vec3 calcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 	float specStrength = pow(max(dot(reflectDir, viewDir), 0.0), material.shininess);
 	vec3 specular = specStrength * light.specular * material.specular;
 
-	float shadowResult = calcShadow(FragPosLightSpace, lightDir);
+	float shadowResult = calcShadow(light.lightSpaceMatrix * vec4(FragPos, 1.0), lightDir);
 	return ambient + (1.0 - shadowResult) * (diffuse + specular);
 }
 

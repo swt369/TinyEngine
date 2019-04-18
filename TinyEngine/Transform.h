@@ -31,7 +31,10 @@ public:
 
 	glm::mat4 getLocalToClipMatrix(Camera* camera);
 	glm::mat4 getModelMatrix();
+	glm::mat4 getViewMatrix();
 	glm::mat3 getNormalMatrix();
+
+	void CopyTransform(Object* target);
 private:
 	glm::mat4 localToWorldMatrix;
 	void updateLocalToWorldMatrix();

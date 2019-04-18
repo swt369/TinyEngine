@@ -1,11 +1,12 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
+#include <string>
+using namespace std;
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <string>
-using namespace std;
 
 #include "Component.h"
 #include "Shader.h"
@@ -28,6 +29,7 @@ private:
 	static const string AMBIENT_NAME;
 	static const string DIFFUSE_NAME;
 	static const string SPECULAR_NAME;
+	static const string LIGHT_SPACE_MATRIX_NAME;
 
 	static const glm::vec3 DEFAULT_AMBIENT;
 	static const glm::vec3 DEFAULT_DIFFUSE;

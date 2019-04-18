@@ -22,6 +22,7 @@ using namespace std;
 #include "MeshRenderer.h"
 #include "RenderManager.h"
 #include "Shader.h"
+#include "ShadowMapRenderer.h"
 #include "SystemSettings.h"
 #include "Texture.h"
 #include "Object.h"
@@ -35,7 +36,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
-void processInput(Camera* camera, GLFWwindow* pWindow, float deltaTime)
+void processInput(GLFWwindow* pWindow, float deltaTime)
 {
 	if (glfwGetKey(pWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
@@ -85,6 +86,21 @@ void processInput(Camera* camera, GLFWwindow* pWindow, float deltaTime)
 	if (glfwGetKey(pWindow, GLFW_KEY_Q) == GLFW_PRESS)
 	{
 		ObjectController::getInstance().SetTarget(Camera::GetWorldCamera()->GetOwner());
+	}
+
+	if (glfwGetKey(pWindow, GLFW_KEY_E) == GLFW_PRESS)
+	{
+		ObjectController::getInstance().SetTarget(LightManager::getInstance().getMainLight()->GetOwner());
+	}
+
+	if (glfwGetKey(pWindow, GLFW_KEY_R) == GLFW_PRESS)
+	{
+		ShadowMapRenderer::getInstance().shadowMapCamera->depth = 100.0f;
+	}
+
+	if (glfwGetKey(pWindow, GLFW_KEY_T) == GLFW_PRESS)
+	{
+		ShadowMapRenderer::getInstance().shadowMapCamera->depth = -100.0f;
 	}
 }
 
@@ -151,13 +167,9 @@ int main()
 	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(-5.0f, 0.0f, 2.0f), glm::vec3(20.0f, 0.0f, 80.0f), glm::vec3(1.0f));
 	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(20.0f, 0.1f, 20.0f));
 
-	Shader shader2("Shaders/normal.vs", "Shaders/normal.fs");
-	Material material2(&shader2);
-	ObjectBuilder::CreateObject(mesh, &material2, 1000, glm::vec3(-8.0f, 16.0f, -4.0f), glm::vec3(0.0f), glm::vec3(0.1f));
-	ObjectBuilder::CreateObject(mesh, &material2, 1000, glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.1f));
-
-	Object* mainLightObj = ObjectBuilder::CreateObject(glm::vec3(16.0f, 16.0f, 16.0f), glm::vec3(135.0f, 135.0f, 135.0f));
-	LightManager::getInstance().registerLight(mainLightObj->AddComponent<DirectionalLight>());
+	Object* mainLightObj = ObjectBuilder::CreateObject(glm::vec3(0.0f, 16.0f, 0.0f), glm::vec3(-45.0f, 0.0f, 0.0f));
+	Light* mainLight = mainLightObj->AddComponent<DirectionalLight>();
+	LightManager::getInstance().registerMainLight(mainLight);
 
 	Object* cameraObj = ObjectBuilder::CreateObject(glm::vec3(0.0f));
 	cameraObj->AddComponent<Camera>();
@@ -168,13 +180,11 @@ int main()
 	float lastTime = glfwGetTime();
 	while (!glfwWindowShouldClose(pWindow))
 	{
-		Camera* worldCamera = Camera::GetWorldCamera();
-
 		float curTime = glfwGetTime();
-		processInput(worldCamera, pWindow, curTime - lastTime);
+		processInput(pWindow, curTime - lastTime);
 		lastTime = curTime;
 
-		RenderManager::getInstance().RenderWorld(worldCamera);
+		RenderManager::getInstance().RenderWorld();
 
 		glfwSwapBuffers(pWindow);
 		glfwPollEvents();
