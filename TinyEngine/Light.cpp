@@ -7,6 +7,7 @@ const string Light::AMBIENT_NAME = "ambient";
 const string Light::DIFFUSE_NAME = "diffuse";
 const string Light::SPECULAR_NAME = "specular";
 const string Light::LIGHT_SPACE_MATRIX_NAME = "lightSpaceMatrix";
+const string Light::SHADOW_MAP_NAME = "shadowMap";
 
 const glm::vec3 Light::DEFAULT_AMBIENT = glm::vec3(0.1f, 0.1f, 0.1f);
 const glm::vec3 Light::DEFAULT_DIFFUSE = glm::vec3(0.5f, 0.5f, 0.5f);
@@ -43,12 +44,13 @@ Light::Light(Object* object) : Component(object)
 
 }
 
-void Light::use(Shader * shader, int id)
+void Light::use(Material* material, int id)
 {
-	shader->setVec3(getKeyInArray(AMBIENT_NAME, id), ambient);
-	shader->setVec3(getKeyInArray(DIFFUSE_NAME, id), diffuse);
-	shader->setVec3(getKeyInArray(SPECULAR_NAME, id), specular);
-	shader->setMat4(getKeyInArray(LIGHT_SPACE_MATRIX_NAME, id), ShadowMapRenderer::getInstance().shadowMapCamera->GetProjectionMatrix() * GetTransform()->getViewMatrix());
+	material->setVec3(getKeyInArray(AMBIENT_NAME, id), ambient, false);
+	material->setVec3(getKeyInArray(DIFFUSE_NAME, id), diffuse, false);
+	material->setVec3(getKeyInArray(SPECULAR_NAME, id), specular, false);
+	material->setTexture(getKeyInArray(SHADOW_MAP_NAME, id), GetShadowMap(), false);
+	material->setMat4(getKeyInArray(LIGHT_SPACE_MATRIX_NAME, id), GetLightSpaceMatrix());
 }
 
 string Light::getKeyInArray(string key, int id)
@@ -58,7 +60,7 @@ string Light::getKeyInArray(string key, int id)
 
 DirectionalLight::DirectionalLight(Object* object) : Light(object)
 {
-
+	shadowMapRenderer = new DirectionalShadowMapRenderer(this);
 }
 
 string DirectionalLight::GetComponentName()
@@ -66,10 +68,10 @@ string DirectionalLight::GetComponentName()
 	return DIRECTIONAL_LIGHT_NAME;
 }
 
-void DirectionalLight::use(Shader* shader, int id)
+void DirectionalLight::use(Material* material, int id)
 {
-	Light::use(shader, id);
-	shader->setVec3(getKeyInArray(DIRECTION_NAME, id), GetTransform()->getForward());
+	Light::use(material, id);
+	material->setVec3(getKeyInArray(DIRECTION_NAME, id), GetTransform()->getForward());
 }
 
 string DirectionalLight::getTypeName()
@@ -82,6 +84,21 @@ string DirectionalLight::getTypeCountName()
 	return DIRECTIONAL_LIGHT_COUNT_NAME;
 }
 
+void DirectionalLight::RenderShadowMap()
+{
+	shadowMapRenderer->RenderShadowMap();
+}
+
+Texture * DirectionalLight::GetShadowMap()
+{
+	return shadowMapRenderer->GetShadowMap();
+}
+
+glm::mat4 DirectionalLight::GetLightSpaceMatrix()
+{
+	return shadowMapRenderer->GetProjectionMatrix() * GetTransform()->getViewMatrix();
+}
+
 PointLight::PointLight(Object* object) : Light(object)
 {
 
@@ -92,13 +109,13 @@ string PointLight::GetComponentName()
 	return POINT_LIGHT_NAME;
 }
 
-void PointLight::use(Shader* shader, int id)
+void PointLight::use(Material* material, int id)
 {
-	Light::use(shader, id);
-	shader->setVec3(getKeyInArray(POSITION_NAME, id), GetTransform()->position);
-	shader->setFloat(getKeyInArray(CONSTANT_NAME, id), constant);
-	shader->setFloat(getKeyInArray(LINEAR_NAME, id), linear);
-	shader->setFloat(getKeyInArray(QUADRATIC_NAME, id), quadratic);
+	Light::use(material, id);
+	material->setVec3(getKeyInArray(POSITION_NAME, id), GetTransform()->position);
+	material->setFloat(getKeyInArray(CONSTANT_NAME, id), constant);
+	material->setFloat(getKeyInArray(LINEAR_NAME, id), linear);
+	material->setFloat(getKeyInArray(QUADRATIC_NAME, id), quadratic);
 }
 
 string PointLight::getTypeName()
@@ -111,6 +128,20 @@ string PointLight::getTypeCountName()
 	return POINT_LIGHT_COUNT_NAME;
 }
 
+void PointLight::RenderShadowMap()
+{
+}
+
+Texture * PointLight::GetShadowMap()
+{
+	return nullptr;
+}
+
+glm::mat4 PointLight::GetLightSpaceMatrix()
+{
+	return glm::mat4();
+}
+
 SpotLight::SpotLight(Object* object) : Light(object)
 {
 
@@ -121,13 +152,13 @@ string SpotLight::GetComponentName()
 	return SPOT_LIGHT_NAME;
 }
 
-void SpotLight::use(Shader* shader, int id)
+void SpotLight::use(Material* material, int id)
 {
-	Light::use(shader, id);
-	shader->setVec3(getKeyInArray(POSITION_NAME, id), GetTransform()->position);
-	shader->setVec3(getKeyInArray(DIRECTION_NAME, id), GetTransform()->getForward());
-	shader->setFloat(getKeyInArray(INNER_CUTOFF_NAME, id), cos(glm::radians(innerCutoffAngle)));
-	shader->setFloat(getKeyInArray(OUTER_CUTOFF_NAME, id), cos(glm::radians(outerCutoffAngle)));
+	Light::use(material, id);
+	material->setVec3(getKeyInArray(POSITION_NAME, id), GetTransform()->position);
+	material->setVec3(getKeyInArray(DIRECTION_NAME, id), GetTransform()->getForward());
+	material->setFloat(getKeyInArray(INNER_CUTOFF_NAME, id), cos(glm::radians(innerCutoffAngle)));
+	material->setFloat(getKeyInArray(OUTER_CUTOFF_NAME, id), cos(glm::radians(outerCutoffAngle)));
 }
 
 string SpotLight::getTypeName()
@@ -138,4 +169,18 @@ string SpotLight::getTypeName()
 string SpotLight::getTypeCountName()
 {
 	return SPOT_LIGHT_COUNT_NAME;
+}
+
+void SpotLight::RenderShadowMap()
+{
+}
+
+Texture * SpotLight::GetShadowMap()
+{
+	return nullptr;
+}
+
+glm::mat4 SpotLight::GetLightSpaceMatrix()
+{
+	return glm::mat4();
 }

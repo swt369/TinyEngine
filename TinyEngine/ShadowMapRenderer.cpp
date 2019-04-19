@@ -2,20 +2,20 @@
 #include "ObjectBuilder.h"
 #include "RenderManager.h"
 #include "ShadowMapRenderer.h"
+#include "Transform.h"
 
-const int ShadowMapRenderer::DEFAULT_SHADOW_MAP_WIDTH = 1280;
-const int ShadowMapRenderer::DEFAULT_SHADOW_MAP_HEIGHT = 720;
+const int DirectionalShadowMapRenderer::DEFAULT_SHADOW_MAP_WIDTH = 1280;
+const int DirectionalShadowMapRenderer::DEFAULT_SHADOW_MAP_HEIGHT = 720;
 
-const float ShadowMapRenderer::DEFAULT_ORTHO_LEFT = -20.0f;
-const float ShadowMapRenderer::DEFAULT_ORTHO_RIGHT = 20.0f;
-const float ShadowMapRenderer::DEFAULT_ORTHO_BOTTOM = -20.0f;
-const float ShadowMapRenderer::DEFAULT_ORTHO_UP = 20.0f;
-const float ShadowMapRenderer::DEFAULT_NEAR_PLANE = 0.1f;
-const float ShadowMapRenderer::DEFAULT_FAR_PLANE = 100.0f;
-const float ShadowMapRenderer::DEFAULT_DEPTH = -10.0f;
+const float DirectionalShadowMapRenderer::DEFAULT_ORTHO_LEFT = -20.0f;
+const float DirectionalShadowMapRenderer::DEFAULT_ORTHO_RIGHT = 20.0f;
+const float DirectionalShadowMapRenderer::DEFAULT_ORTHO_BOTTOM = -20.0f;
+const float DirectionalShadowMapRenderer::DEFAULT_ORTHO_UP = 20.0f;
+const float DirectionalShadowMapRenderer::DEFAULT_NEAR_PLANE = 0.1f;
+const float DirectionalShadowMapRenderer::DEFAULT_FAR_PLANE = 100.0f;
+const float DirectionalShadowMapRenderer::DEFAULT_DEPTH = -10.0f;
 
-
-ShadowMapRenderer::ShadowMapRenderer()
+DirectionalShadowMapRenderer::DirectionalShadowMapRenderer(DirectionalLight * light) : light(light)
 {
 	shadowMapShader = new Shader("Shaders/depthMap.vs", "Shaders/depthMap.fs");
 	shadowMapFrameBuffer = new FrameBuffer(DEFAULT_SHADOW_MAP_WIDTH, DEFAULT_SHADOW_MAP_HEIGHT, NON, USE_TEXTURE, NON);
@@ -32,20 +32,9 @@ ShadowMapRenderer::ShadowMapRenderer()
 	shadowMapCamera->depth = DEFAULT_DEPTH;
 }
 
-ShadowMapRenderer & ShadowMapRenderer::getInstance()
+void DirectionalShadowMapRenderer::RenderShadowMap()
 {
-	static ShadowMapRenderer instance;
-	return instance;
-}
-
-void ShadowMapRenderer::RenderShadowMap()
-{
-	Light* mainLight = LightManager::getInstance().getMainLight();
-	if (mainLight == nullptr)
-	{
-		return;
-	}
-	shadowMapCamera->GetTransform()->CopyTransform(mainLight->GetOwner());
+	shadowMapCamera->GetTransform()->CopyTransform(light->GetOwner());
 
 	RenderManager::getInstance().SortRenderQueue();
 	shadowMapFrameBuffer->Bind();
@@ -58,7 +47,12 @@ void ShadowMapRenderer::RenderShadowMap()
 	shadowMapFrameBuffer->Unbind();
 }
 
-Texture * ShadowMapRenderer::GetShadowMap()
+Texture * DirectionalShadowMapRenderer::GetShadowMap()
 {
 	return (Texture*)shadowMapFrameBuffer->depthBuffer;
+}
+
+glm::mat4 DirectionalShadowMapRenderer::GetProjectionMatrix()
+{
+	return shadowMapCamera->GetProjectionMatrix();
 }

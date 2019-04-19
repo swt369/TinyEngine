@@ -20,6 +20,7 @@ private:
 	FrameBuffer* initialFrameBuffer;
 	MultisampleFrameBuffer* initialMultisampleFrameBuffer;
 
+	RenderShadowMapStage* renderShadowMapStage;
 	RenderObjectStage* renderObjectStage;
 	BlitStage* blitStage;
 	PostProcessingStage* finalStage;

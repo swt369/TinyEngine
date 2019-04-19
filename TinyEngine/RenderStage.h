@@ -54,7 +54,13 @@ private:
 class RenderShadowMapStage : public IRenderStage
 {
 public:
-	RenderShadowMapStage();
+	IFrameBuffer* Render(IFrameBuffer* inputFrameBuffer, bool isFinal) override;
+};
+
+class VisualizeShadowMapStage : public IRenderStage
+{
+public:
+	VisualizeShadowMapStage();
 
 	IFrameBuffer* Render(IFrameBuffer* inputFrameBuffer, bool isFinal) override;
 private:

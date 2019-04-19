@@ -53,15 +53,15 @@ void MeshRenderer::Draw(Camera * camera, Shader* globalShader)
 	Transform* transform = GetTransform();
 	Shader* shaderToBeUsed = globalShader != nullptr ? globalShader : material->shader;
 
-	material->setTexture("shadowMap", ShadowMapRenderer::getInstance().GetShadowMap());
+	//material->setTexture("shadowMap", IShadowMapRenderer::getInstance().GetShadowMap());
+	LightManager::getInstance().writeLightParams(material);
+	material->setMat4(Shader::LOCAL_TO_CLIP_MATRIX_NAME, transform->getLocalToClipMatrix(camera), false);
+	material->setMat4(Shader::PROJECTION_MATRIX_NAME, camera->GetProjectionMatrix(), false);
+	material->setMat4(Shader::VIEW_MATRIX_NAME, camera->GetTransform()->getViewMatrix(), false);
+	material->setMat4(Shader::MODEL_MATRIX_NAME, transform->getModelMatrix(), false);
+	material->setMat3(Shader::NORMAL_MATRIX_NAME, transform->getNormalMatrix(), false);
+	material->setVec3(Shader::VIEW_POS, camera->GetTransform()->position, false);
 	material->Use(shaderToBeUsed);
-	shaderToBeUsed->setMat4(Shader::LOCAL_TO_CLIP_MATRIX_NAME, transform->getLocalToClipMatrix(camera));
-	shaderToBeUsed->setMat4(Shader::PROJECTION_MATRIX_NAME, camera->GetProjectionMatrix());
-	shaderToBeUsed->setMat4(Shader::VIEW_MATRIX_NAME, camera->GetTransform()->getViewMatrix());
-	shaderToBeUsed->setMat4(Shader::MODEL_MATRIX_NAME, transform->getModelMatrix());
-	shaderToBeUsed->setMat3(Shader::NORMAL_MATRIX_NAME, transform->getNormalMatrix());
-	shaderToBeUsed->setVec3(Shader::VIEW_POS, camera->GetTransform()->position);
-	LightManager::getInstance().writeLightParams(shaderToBeUsed);
 
 	switch (polygonMode)
 	{

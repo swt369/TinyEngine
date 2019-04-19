@@ -20,7 +20,7 @@ using namespace std;
 class RenderManager
 {
 	friend class RenderObjectStage;
-	friend class ShadowMapRenderer;
+	friend class DirectionalShadowMapRenderer;
 public:
 	static const int DEFAULT_RENDER_QUEUE = 1000;
 	static const int OPAQUE_RENDER_QUEUE_MAXIMUM = 1999;

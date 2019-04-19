@@ -5,10 +5,12 @@ RenderPipeline::RenderPipeline()
 	initialFrameBuffer = new FrameBuffer();
 	initialMultisampleFrameBuffer = new MultisampleFrameBuffer(4);
 
+	renderShadowMapStage = new RenderShadowMapStage();
 	renderObjectStage = new RenderObjectStage();
 	blitStage = new BlitStage();
 	finalStage = new PostProcessingStage(new Shader("Shaders/postprocessing.vs", "Shaders/postprocessing_nothing.fs"));
 
+	//stages.push_back(renderShadowMapStage);
 	stages.push_back(renderObjectStage);
 	stages.push_back(blitStage);
 	stages.push_back(finalStage);
@@ -18,6 +20,8 @@ RenderPipeline::RenderPipeline()
 
 void RenderPipeline::Render()
 {
+	renderShadowMapStage->Render(nullptr, false);
+
 	IFrameBuffer* nextFrameBuffer = nullptr;
 	if (isMSAAEnabled)
 	{

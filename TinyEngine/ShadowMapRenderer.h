@@ -11,16 +11,22 @@
 #include "Shader.h"
 #include "Texture.h"
 
-class ShadowMapRenderer
+class IShadowMapRenderer
 {
 public:
-	static ShadowMapRenderer& getInstance();
+	virtual void RenderShadowMap() = 0;
+	virtual Texture* GetShadowMap() = 0;
+	virtual glm::mat4 GetProjectionMatrix() = 0;
+};
 
-	void RenderShadowMap();
-	Texture* GetShadowMap();
+class DirectionalShadowMapRenderer : public IShadowMapRenderer
+{
+public:
+	DirectionalShadowMapRenderer(DirectionalLight* light);
 
-	Object* shadowMapCameraObj;
-	Camera* shadowMapCamera;
+	void RenderShadowMap() override;
+	Texture* GetShadowMap() override;
+	glm::mat4 GetProjectionMatrix() override;
 private:
 	const static int DEFAULT_SHADOW_MAP_WIDTH;
 	const static int DEFAULT_SHADOW_MAP_HEIGHT;
@@ -33,8 +39,10 @@ private:
 	const static float DEFAULT_FAR_PLANE;
 	const static float DEFAULT_DEPTH;
 
-	ShadowMapRenderer();
+	DirectionalLight* light;
 
+	Object* shadowMapCameraObj;
+	Camera* shadowMapCamera;
 	IFrameBuffer* shadowMapFrameBuffer;
 	Shader* shadowMapShader;
 };

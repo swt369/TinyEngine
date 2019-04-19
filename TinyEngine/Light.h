@@ -9,8 +9,11 @@ using namespace std;
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Component.h"
+#include "Material.h"
 #include "Shader.h"
+#include "Texture.h"
 
+class DirectionalShadowMapRenderer;
 class Light : public Component
 {
 public:
@@ -20,9 +23,12 @@ public:
 
 	Light(Object* object);
 
-	virtual void use(Shader* shader, int id);
+	virtual void use(Material* material, int id);
 	virtual string getTypeName() = 0;
 	virtual string getTypeCountName() = 0;
+	virtual void RenderShadowMap() = 0;
+	virtual Texture* GetShadowMap() = 0;
+	virtual glm::mat4 GetLightSpaceMatrix() = 0;
 protected:
 	string getKeyInArray(string key, int id);
 private:
@@ -30,6 +36,7 @@ private:
 	static const string DIFFUSE_NAME;
 	static const string SPECULAR_NAME;
 	static const string LIGHT_SPACE_MATRIX_NAME;
+	static const string SHADOW_MAP_NAME;
 
 	static const glm::vec3 DEFAULT_AMBIENT;
 	static const glm::vec3 DEFAULT_DIFFUSE;
@@ -44,13 +51,18 @@ public:
 	DirectionalLight(Object* object);
 
 	string GetComponentName() override;
-	void use(Shader* shader, int id) override;
+	void use(Material* material, int id) override;
 	string getTypeName() override;
 	string getTypeCountName() override;
+	void RenderShadowMap() override;
+	Texture* GetShadowMap() override;
+	glm::mat4 GetLightSpaceMatrix() override;
 private:
 	static const string DIRECTIONAL_LIGHT_ARRAY_NAME;
 	static const string DIRECTIONAL_LIGHT_COUNT_NAME;
 	static const string DIRECTION_NAME;
+
+	DirectionalShadowMapRenderer* shadowMapRenderer;
 };
 
 class PointLight : public Light
@@ -65,9 +77,12 @@ public:
 	PointLight(Object* object);
 
 	string GetComponentName() override;
-	void use(Shader* shader, int id) override;
+	void use(Material* material, int id) override;
 	string getTypeName() override;
 	string getTypeCountName() override;
+	void RenderShadowMap() override;
+	Texture* GetShadowMap() override;
+	glm::mat4 GetLightSpaceMatrix() override;
 private:
 	static const string POINT_LIGHT_ARRAY_NAME;
 	static const string POINT_LIGHT_COUNT_NAME;
@@ -93,9 +108,12 @@ public:
 	SpotLight(Object* object);
 
 	string GetComponentName() override;
-	void use(Shader* shader, int id) override;
+	void use(Material* material, int id) override;
 	string getTypeName() override;
 	string getTypeCountName() override;
+	void RenderShadowMap() override;
+	Texture* GetShadowMap() override;
+	glm::mat4 GetLightSpaceMatrix() override;
 private:
 	static const string SPOT_LIGHT_ARRAY_NAME;
 	static const string SPOT_LIGHT_COUNT_NAME;

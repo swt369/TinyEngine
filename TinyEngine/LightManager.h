@@ -7,6 +7,7 @@
 using namespace std;
 
 #include "Light.h"
+#include "Material.h"
 #include "Shader.h"
 
 class LightManager
@@ -19,7 +20,8 @@ public:
 	void registerLight(Light* light);
 	void registerMainLight(Light* light);
 	void unregisterLight(Light* light);
-	void writeLightParams(Shader* shader);
+	void writeLightParams(Material* material);
+	void renderShadowMaps();
 	Light* getMainLight();
 private:
 	LightManager();

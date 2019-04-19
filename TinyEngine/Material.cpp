@@ -27,54 +27,110 @@ void Material::setShader(Shader * shader)
 	this->shader = shader;
 }
 
-void Material::setInt(string key, int value)
+void Material::setInt(string key, int value, bool isPermanent)
 {
-	intMap[key] = value;
+	if (isPermanent)
+	{
+		intMap[key] = value;
+	}
+	else
+	{
+		disposableIntMap[key] = value;
+	}
 }
 
-void Material::setFloat(string key, float value)
+void Material::setFloat(string key, float value, bool isPermanent)
 {
-	floatMap[key] = value;
+	if (isPermanent)
+	{
+		floatMap[key] = value;
+	}
+	else
+	{
+		disposableFloatMap[key] = value;
+	}
 }
 
-void Material::setBool(string key, bool value)
+void Material::setBool(string key, bool value, bool isPermanent)
 {
-	boolMap[key] = value;
+	if (isPermanent)
+	{
+		boolMap[key] = value;
+	}
+	else
+	{
+		disposableBoolMap[key] = value;
+	}
 }
 
-void Material::setVec3(string key, glm::vec3 value)
+void Material::setVec3(string key, glm::vec3 value, bool isPermanent)
 {
-	vec3Map[key] = value;
+	if (isPermanent)
+	{
+		vec3Map[key] = value;
+	}
+	else
+	{
+		disposableVec3Map[key] = value;
+	}
 }
 
-void Material::setMat3(string key, glm::mat3 value)
+void Material::setMat3(string key, glm::mat3 value, bool isPermanent)
 {
-	mat3Map[key] = value;
+	if (isPermanent)
+	{
+		mat3Map[key] = value;
+	}
+	else
+	{
+		disposableMat3Map[key] = value;
+	}
 }
 
-void Material::setMat4(string key, glm::mat4 value)
+void Material::setMat4(string key, glm::mat4 value, bool isPermanent)
 {
-	mat4Map[key] = value;
+	if (isPermanent)
+	{
+		mat4Map[key] = value;
+	}
+	else
+	{
+		disposableMat4Map[key] = value;
+	}
 }
 
-void Material::setTexture(string key, Texture* value)
+void Material::setTexture(string key, Texture* value, bool isPermanent)
 {
-	textureMap[key] = value;
+	if (isPermanent)
+	{
+		textureMap[key] = value;
+	}
+	else
+	{
+		disposableTextureMap[key] = value;
+	}
 }
 
-void Material::setDiffuseTexture(int index, Texture * value)
+void Material::setDiffuseTexture(int index, Texture * value, bool isPermanent)
 {
-	setTexture(StringUtil::format(DIFFUSE_TEXTURE_NAME_FMT, index), value);
+	setTexture(StringUtil::format(DIFFUSE_TEXTURE_NAME_FMT, index), value, isPermanent);
 }
 
-void Material::setSpecularTexture(int index, Texture * value)
+void Material::setSpecularTexture(int index, Texture * value, bool isPermanent)
 {
-	setTexture(StringUtil::format(SPECULAR_TEXTURE_NAME_FMT, index), value);
+	setTexture(StringUtil::format(SPECULAR_TEXTURE_NAME_FMT, index), value, isPermanent);
 }
 
-void Material::setCubemap(string key, Cubemap * value)
+void Material::setCubemap(string key, Cubemap * value, bool isPermanent)
 {
-	cubemapMap[key] = value;
+	if (isPermanent)
+	{
+		cubemapMap[key] = value;
+	}
+	else
+	{
+		disposableCubemapMap[key] = value;
+	}
 }
 
 void Material::Use(Shader* globalShader)
@@ -86,7 +142,12 @@ void Material::Use(Shader* globalShader)
 	}
 
 	shaderToBeUsed->use();
+
 	for (map<string, int>::const_iterator it = intMap.begin(); it != intMap.end(); it++)
+	{
+		shaderToBeUsed->setInt(it->first, it->second);
+	}
+	for (map<string, int>::const_iterator it = disposableIntMap.begin(); it != disposableIntMap.end(); it++)
 	{
 		shaderToBeUsed->setInt(it->first, it->second);
 	}
@@ -95,8 +156,16 @@ void Material::Use(Shader* globalShader)
 	{
 		shaderToBeUsed->setFloat(it->first, it->second);
 	}
+	for (map<string, float>::const_iterator it = disposableFloatMap.begin(); it != disposableFloatMap.end(); it++)
+	{
+		shaderToBeUsed->setFloat(it->first, it->second);
+	}
 
 	for (map<string, bool>::const_iterator it = boolMap.begin(); it != boolMap.end(); it++)
+	{
+		shaderToBeUsed->setBool(it->first, it->second);
+	}
+	for (map<string, bool>::const_iterator it = disposableBoolMap.begin(); it != disposableBoolMap.end(); it++)
 	{
 		shaderToBeUsed->setBool(it->first, it->second);
 	}
@@ -105,13 +174,25 @@ void Material::Use(Shader* globalShader)
 	{
 		shaderToBeUsed->setVec3(it->first, it->second);
 	}
+	for (map<string, glm::vec3>::const_iterator it = disposableVec3Map.begin(); it != disposableVec3Map.end(); it++)
+	{
+		shaderToBeUsed->setVec3(it->first, it->second);
+	}
 
 	for (map<string, glm::mat3>::const_iterator it = mat3Map.begin(); it != mat3Map.end(); it++)
 	{
 		shaderToBeUsed->setMat3(it->first, it->second);
 	}
+	for (map<string, glm::mat3>::const_iterator it = disposableMat3Map.begin(); it != disposableMat3Map.end(); it++)
+	{
+		shaderToBeUsed->setMat3(it->first, it->second);
+	}
 
 	for (map<string, glm::mat4>::const_iterator it = mat4Map.begin(); it != mat4Map.end(); it++)
+	{
+		shaderToBeUsed->setMat4(it->first, it->second);
+	}
+	for (map<string, glm::mat4>::const_iterator it = disposableMat4Map.begin(); it != disposableMat4Map.end(); it++)
 	{
 		shaderToBeUsed->setMat4(it->first, it->second);
 	}
@@ -124,7 +205,22 @@ void Material::Use(Shader* globalShader)
 		texture->Bind(curTextureIndex);
 		shaderToBeUsed->setInt(name, curTextureIndex++);
 	}
+	for (map<string, Texture*>::const_iterator it = disposableTextureMap.begin(); it != disposableTextureMap.end(); it++)
+	{
+		string name = it->first;
+		Texture* texture = it->second;
+		texture->Bind(curTextureIndex);
+		shaderToBeUsed->setInt(name, curTextureIndex++);
+	}
+
 	for (map<string, Cubemap*>::const_iterator it = cubemapMap.begin(); it != cubemapMap.end(); it++)
+	{
+		string name = it->first;
+		Cubemap* cubemap = it->second;
+		cubemap->Bind(curTextureIndex);
+		shaderToBeUsed->setInt(name, curTextureIndex++);
+	}
+	for (map<string, Cubemap*>::const_iterator it = disposableCubemapMap.begin(); it != disposableCubemapMap.end(); it++)
 	{
 		string name = it->first;
 		Cubemap* cubemap = it->second;
@@ -136,6 +232,15 @@ void Material::Use(Shader* globalShader)
 	shaderToBeUsed->setVec3(getKey(DIFFUSE_NAME), diffuse);
 	shaderToBeUsed->setVec3(getKey(SPECULAR_NAME), specular);
 	shaderToBeUsed->setFloat(getKey(SHININESS_NAME), shininess);
+
+	disposableIntMap.clear();
+	disposableFloatMap.clear();
+	disposableBoolMap.clear();
+	disposableVec3Map.clear();
+	disposableMat3Map.clear();
+	disposableMat4Map.clear();
+	disposableTextureMap.clear();
+	disposableCubemapMap.clear();
 }
 
 string Material::getKey(string key)

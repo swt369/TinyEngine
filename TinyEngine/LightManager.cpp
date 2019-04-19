@@ -36,19 +36,31 @@ void LightManager::unregisterLight(Light * light)
 	}
 }
 
-void LightManager::writeLightParams(Shader * shader)
+void LightManager::writeLightParams(Material * material)
 {
 	for (auto itForMap = lightMap.begin(); itForMap != lightMap.end(); itForMap++)
 	{
 		int id = 0;
 		for (auto itForSet = itForMap->second.begin(); itForSet != itForMap->second.end(); itForSet++) 
 		{
-			(*itForSet)->use(shader, id++);
+			(*itForSet)->use(material, id++);
 		}
 
 		if (id > 0)
 		{
-			shader->setInt((*(itForMap->second.begin()))->getTypeCountName(), id);
+			material->setInt((*(itForMap->second.begin()))->getTypeCountName(), id, false);
+		}
+	}
+}
+
+void LightManager::renderShadowMaps()
+{
+	for (auto itForMap = lightMap.begin(); itForMap != lightMap.end(); itForMap++)
+	{
+		int id = 0;
+		for (auto itForSet = itForMap->second.begin(); itForSet != itForMap->second.end(); itForSet++)
+		{
+			(*itForSet)->RenderShadowMap();
 		}
 	}
 }

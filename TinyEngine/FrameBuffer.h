@@ -10,6 +10,7 @@ enum BufferSetting
 {
 	NON,
 	USE_TEXTURE,
+	USE_CUBEMAP,
 	USE_RBO,
 };
 

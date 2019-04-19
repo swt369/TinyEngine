@@ -93,15 +93,15 @@ void processInput(GLFWwindow* pWindow, float deltaTime)
 		ObjectController::getInstance().SetTarget(LightManager::getInstance().getMainLight()->GetOwner());
 	}
 
-	if (glfwGetKey(pWindow, GLFW_KEY_R) == GLFW_PRESS)
-	{
-		ShadowMapRenderer::getInstance().shadowMapCamera->depth = 100.0f;
-	}
+	//if (glfwGetKey(pWindow, GLFW_KEY_R) == GLFW_PRESS)
+	//{
+	//	IShadowMapRenderer::getInstance().shadowMapCamera->depth = 100.0f;
+	//}
 
-	if (glfwGetKey(pWindow, GLFW_KEY_T) == GLFW_PRESS)
-	{
-		ShadowMapRenderer::getInstance().shadowMapCamera->depth = -100.0f;
-	}
+	//if (glfwGetKey(pWindow, GLFW_KEY_T) == GLFW_PRESS)
+	//{
+	//	IShadowMapRenderer::getInstance().shadowMapCamera->depth = -100.0f;
+	//}
 }
 
 void processScroll(GLFWwindow* pWindow, double xoffset, double yoffset)
@@ -177,6 +177,10 @@ int main()
 	Object* mainLightObj = ObjectBuilder::CreateObject(glm::vec3(0.0f, 16.0f, 0.0f), glm::vec3(-45.0f, 0.0f, 0.0f));
 	Light* mainLight = mainLightObj->AddComponent<DirectionalLight>();
 	LightManager::getInstance().registerMainLight(mainLight);
+
+	Object* mainLightObj2 = ObjectBuilder::CreateObject(glm::vec3(10.0f, 16.0f, 5.0f), glm::vec3(-45.0f, 120.0f, 0.0f));
+	Light* mainLight2 = mainLightObj2->AddComponent<DirectionalLight>();
+	LightManager::getInstance().registerLight(mainLight2);
 
 	Object* cameraObj = ObjectBuilder::CreateObject(glm::vec3(0.0f));
 	cameraObj->AddComponent<Camera>();
