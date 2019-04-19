@@ -3,6 +3,7 @@
 
 #include <glad/glad.h>
 
+#include "Cubemap.h"
 #include "SystemSettings.h"
 #include "Texture.h"
 
@@ -57,6 +58,7 @@ private:
 	void CreateAndBindRenderBufferInternal(unsigned int* RBO, int width, int height, int glFormat, int glAttachment);
 	void CreateAndBindTextureInternal(ITexture** texture, int glAttachment, int width, int height,
 		int glInternalFormat, int glFormat, int glDatatype = GL_UNSIGNED_BYTE, int wrapMethodX = GL_REPEAT, int wrapMethodY = GL_REPEAT);
+	void CreateAndBindCubemapInternal(ITexture** texture, int glAttachment, int width, int height);
 };
 
 #endif // !FRAME_BUFFER_H

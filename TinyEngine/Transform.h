@@ -21,8 +21,11 @@ public:
 
 	string GetComponentName() override;
 
+	void setPosition(float x, float y, float z);
 	void setPosition(glm::vec3 position);
+	void setRotation(float x, float y, float z);
 	void setRotation(glm::vec3 rotation);
+	void setScale(float x, float y, float z);
 	void setScale(glm::vec3 scale);
 
 	glm::vec3 getForward();
@@ -32,6 +35,7 @@ public:
 	glm::mat4 getLocalToClipMatrix(Camera* camera);
 	glm::mat4 getModelMatrix();
 	glm::mat4 getViewMatrix();
+	glm::mat4 getViewMatrix(glm::vec3 up);
 	glm::mat3 getNormalMatrix();
 
 	void CopyTransform(Object* target);

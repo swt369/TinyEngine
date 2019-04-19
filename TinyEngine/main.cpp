@@ -167,20 +167,20 @@ int main()
 	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(-5.0f, 0.0f, 2.0f), glm::vec3(20.0f, 0.0f, 80.0f), glm::vec3(1.0f));
 	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(100.0f, 0.1f, 100.0f));
 
-	vector<Object*> model = LoadManager::getInstance().LoadModelData("../Resources/nanosuit/nanosuit.obj");
-	for (auto obj : model)
-	{
-		MeshRenderer* renderer = (MeshRenderer*)(obj->GetComponent(MeshRenderer::MESH_RENDERER_NAME));
-		renderer->GetMaterial()->setShader(&shader);
-	}
+	//vector<Object*> model = LoadManager::getInstance().LoadModelData("../Resources/nanosuit/nanosuit.obj");
+	//for (auto obj : model)
+	//{
+	//	MeshRenderer* renderer = (MeshRenderer*)(obj->GetComponent(MeshRenderer::MESH_RENDERER_NAME));
+	//	renderer->GetMaterial()->setShader(&shader);
+	//}
 
-	Object* mainLightObj = ObjectBuilder::CreateObject(glm::vec3(0.0f, 16.0f, 0.0f), glm::vec3(-45.0f, 0.0f, 0.0f));
-	Light* mainLight = mainLightObj->AddComponent<DirectionalLight>();
+	Object* mainLightObj = ObjectBuilder::CreateObject(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	Light* mainLight = mainLightObj->AddComponent<PointLight>();
 	LightManager::getInstance().registerMainLight(mainLight);
 
-	Object* mainLightObj2 = ObjectBuilder::CreateObject(glm::vec3(10.0f, 16.0f, 5.0f), glm::vec3(-45.0f, 120.0f, 0.0f));
-	Light* mainLight2 = mainLightObj2->AddComponent<DirectionalLight>();
-	LightManager::getInstance().registerLight(mainLight2);
+	//Object* mainLightObj2 = ObjectBuilder::CreateObject(glm::vec3(10.0f, 16.0f, 5.0f), glm::vec3(-45.0f, 120.0f, 0.0f));
+	//Light* mainLight2 = mainLightObj2->AddComponent<DirectionalLight>();
+	//LightManager::getInstance().registerMainLight(mainLight2);
 
 	Object* cameraObj = ObjectBuilder::CreateObject(glm::vec3(0.0f));
 	cameraObj->AddComponent<Camera>();

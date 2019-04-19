@@ -17,6 +17,11 @@ string Transform::GetComponentName()
 	return TRANSFORM_NAME;
 }
 
+void Transform::setPosition(float x, float y, float z)
+{
+	setPosition(glm::vec3(x, y, z));
+}
+
 void Transform::setPosition(glm::vec3 position)
 {
 	if (this->position == position)
@@ -28,6 +33,11 @@ void Transform::setPosition(glm::vec3 position)
 	updateLocalToWorldMatrix();
 }
 
+void Transform::setRotation(float x, float y, float z)
+{
+	setRotation(glm::vec3(x, y, z));
+}
+
 void Transform::setRotation(glm::vec3 rotation)
 {
 	if (this->rotation == rotation)
@@ -37,6 +47,11 @@ void Transform::setRotation(glm::vec3 rotation)
 
 	this->rotation = rotation;
 	updateLocalToWorldMatrix();
+}
+
+void Transform::setScale(float x, float y, float z)
+{
+	setScale(glm::vec3(x, y, z));
 }
 
 void Transform::setScale(glm::vec3 scale)
@@ -78,6 +93,11 @@ glm::mat4 Transform::getModelMatrix()
 glm::mat4 Transform::getViewMatrix()
 {
 	return glm::lookAt(position, position + getForward(), getUp());
+}
+
+glm::mat4 Transform::getViewMatrix(glm::vec3 up)
+{
+	return glm::lookAt(position, position + getForward(), up);
 }
 
 glm::mat3 Transform::getNormalMatrix()

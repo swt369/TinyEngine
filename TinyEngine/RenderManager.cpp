@@ -10,7 +10,6 @@ RenderManager & RenderManager::getInstance()
 
 void RenderManager::RenderWorld()
 {
-	//IShadowMapRenderer::getInstance().RenderShadowMap();
 	renderPipeline->Render();
 }
 

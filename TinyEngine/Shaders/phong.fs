@@ -1,8 +1,8 @@
 ﻿#version 330 core
 
 #define MAX_DIRECTIONAL_LIGHT_COUNT 4
-#define MAX_POINT_LIGHT_COUNT 16
-#define MAX_SPOT_LIGHT_COUNT 16
+#define MAX_POINT_LIGHT_COUNT 1
+#define MAX_SPOT_LIGHT_COUNT 1
 
 struct Material
 {
@@ -17,9 +17,9 @@ struct DirectionalLight
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
+	
 	sampler2D shadowMap;
 	mat4 lightSpaceMatrix;
-	
 	vec3 direction;
 };
 
@@ -28,12 +28,13 @@ struct PointLight
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
-	mat4 lightSpaceMatrix;
 
+	samplerCube shadowMap;
 	vec3 position;
 	float constant;
 	float linear;
 	float quadratic;
+	float range;
 };
 
 struct SpotLight
@@ -41,7 +42,6 @@ struct SpotLight
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
-	mat4 lightSpaceMatrix;
 	
 	vec3 position;
 	vec3 direction;
@@ -67,24 +67,25 @@ uniform int spotLightCount;
 uniform sampler2D texture_diffuse_0;
 
 vec3 calcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir);
-vec3 calcPointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 FragPos);
-vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 FragPos);
-float calcShadow(DirectionalLight light);
+vec3 calcPointLight(PointLight light, vec3 normal, vec3 viewDir);
+vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 viewDir);
+float calcDirectionalShadow(DirectionalLight light);
+float calcOmniDirectionalShadow(PointLight light);
 
 void main()
 {
 	vec3 viewDir = normalize(viewPos - FragPos);
 	vec3 norm = normalize(normal);
 	
-	vec3 resultColor;
+	vec3 resultColor = vec3(0.0);
 	for (int i = 0; i < directionalLightCount; i++)
 		resultColor += calcDirLight(directionalLights[i], norm, viewDir);
 		
 	for (int i = 0; i < pointLightCount; i++)
-		resultColor += calcPointLight(pointLights[i], norm, viewDir, FragPos);
+		resultColor += calcPointLight(pointLights[i], norm, viewDir);
 		
 	for (int i = 0; i < spotLightCount; i++)
-		resultColor += calcSpotLight(spotLights[i], norm, viewDir, FragPos);
+		resultColor += calcSpotLight(spotLights[i], norm, viewDir);
 		
 	FragColor = vec4(resultColor, 1.0);
 }
@@ -102,11 +103,11 @@ vec3 calcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir)
 	float specStrength = pow(max(dot(reflectDir, viewDir), 0.0), material.shininess);
 	vec3 specular = specStrength * light.specular * material.specular;
 
-	float shadowResult = calcShadow(light);
+	float shadowResult = calcDirectionalShadow(light);
 	return ambient + (1.0 - shadowResult) * (diffuse + specular);
 }
 
-vec3 calcPointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 FragPos)
+vec3 calcPointLight(PointLight light, vec3 normal, vec3 viewDir)
 {
 	vec3 lightDir = normalize(light.position - FragPos);
 	float distance = length(light.position - FragPos);
@@ -116,15 +117,16 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 viewDir, vec3 FragPos)
 	vec3 ambient = light.ambient * material.ambient;
 	
 	float diff = max(dot(lightDir, normal), 0.0);
-	vec3 diffuse = diff * light.diffuse * material.diffuse;
+	vec3 diffuse = diff * light.diffuse * material.diffuse * texture(texture_diffuse_0, uv).xyz;
 	
 	float specStrength = pow(max(dot(reflectDir, viewDir), 0.0), material.shininess);
 	vec3 specular = specStrength * light.specular * material.specular;
 
-	return attenuation * (ambient + diffuse + specular);
+	float shadowResult = calcOmniDirectionalShadow(light);
+	return attenuation * (ambient + (1.0 - shadowResult) * (diffuse + specular));
 }
 
-vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 FragPos)
+vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 viewDir)
 {
 	vec3 lightDir = normalize(light.position - FragPos);
 	vec3 reflectDir = reflect(-lightDir, normal);
@@ -143,7 +145,7 @@ vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 FragPos)
 	return intensity * (ambient + diffuse + specular);
 }
 
-float calcShadow(DirectionalLight light)
+float calcDirectionalShadow(DirectionalLight light)
 {
 	vec3 lightDir = normalize(-light.direction);
 	vec4 fragPosLightSpace = light.lightSpaceMatrix * vec4(FragPos, 1.0);
@@ -152,7 +154,7 @@ float calcShadow(DirectionalLight light)
     // transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(light. shadowMap, projCoords.xy).r; 
+    // float closestDepth = texture(light. shadowMap, projCoords.xy).r; 
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
 	
@@ -176,4 +178,15 @@ float calcShadow(DirectionalLight light)
 	}
 	
     return shadow;
+}
+
+float calcOmniDirectionalShadow(PointLight light)
+{
+	vec3 lightToFrag = FragPos - light.position;
+	float closestDepth = texture(light.shadowMap, lightToFrag).r * light.range;
+	float currentDepth = length(lightToFrag);
+	float bias = 0.05;
+	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+	
+	return shadow;
 }

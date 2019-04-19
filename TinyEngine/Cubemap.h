@@ -10,7 +10,7 @@ using namespace std;
 
 #include "Texture.h"
 
-class Cubemap : ITexture
+class Cubemap : public ITexture
 {
 public:
 	Cubemap(int width, int height);

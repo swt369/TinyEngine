@@ -78,6 +78,10 @@ void FrameBuffer::CreateFrameBufferInternal(int width, int height,
 		{
 			CreateAndBindTextureInternal(&depthBuffer, GL_DEPTH_ATTACHMENT, width, height, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER);
 		}
+		else if (depthBufferSetting == USE_CUBEMAP)
+		{
+			CreateAndBindCubemapInternal(&depthBuffer, GL_DEPTH_ATTACHMENT, width, height);
+		}
 		else if (depthBufferSetting == USE_RBO)
 		{
 			CreateAndBindRenderBufferInternal(&depthRBO, width, height, GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
@@ -100,7 +104,7 @@ void FrameBuffer::CreateAndBindRenderBufferInternal(unsigned int * RBO, int widt
 {
 	glGenRenderbuffers(1, RBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, *RBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, glFormat, width, width);
+	glRenderbufferStorage(GL_RENDERBUFFER, glFormat, width, height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, glAttachment, GL_RENDERBUFFER, *RBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
@@ -110,4 +114,11 @@ void FrameBuffer::CreateAndBindTextureInternal(ITexture ** texture, int glAttach
 	*texture = new Texture(width, height, glInternalFormat, glFormat, glDatatype, wrapMethodX, wrapMethodY);
 	(*texture)->Bind();
 	glFramebufferTexture2D(GL_FRAMEBUFFER, glAttachment, GL_TEXTURE_2D, (*texture)->ID, 0);
+}
+
+void FrameBuffer::CreateAndBindCubemapInternal(ITexture ** texture, int glAttachment, int width, int height)
+{
+	*texture = new Cubemap(width, height);
+	(*texture)->Bind();
+	glFramebufferTexture(GL_FRAMEBUFFER, glAttachment, (*texture)->ID, 0);
 }

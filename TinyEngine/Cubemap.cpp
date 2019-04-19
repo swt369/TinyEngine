@@ -22,7 +22,6 @@ Cubemap::Cubemap(string right, string left, string top, string bottom, string ba
 
 	string paths[6] = { right, left, top, bottom, back, front };
 
-	unsigned char* data;
 	for (int i = 0; i < 6; i++)
 	{
 		int width, height, nrChannels;

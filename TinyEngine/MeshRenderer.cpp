@@ -53,7 +53,6 @@ void MeshRenderer::Draw(Camera * camera, Shader* globalShader)
 	Transform* transform = GetTransform();
 	Shader* shaderToBeUsed = globalShader != nullptr ? globalShader : material->shader;
 
-	//material->setTexture("shadowMap", IShadowMapRenderer::getInstance().GetShadowMap());
 	LightManager::getInstance().writeLightParams(material);
 	material->setMat4(Shader::LOCAL_TO_CLIP_MATRIX_NAME, transform->getLocalToClipMatrix(camera), false);
 	material->setMat4(Shader::PROJECTION_MATRIX_NAME, camera->GetProjectionMatrix(), false);
@@ -73,4 +72,8 @@ void MeshRenderer::Draw(Camera * camera, Shader* globalShader)
 			break;
 	}
 	target->Draw();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }

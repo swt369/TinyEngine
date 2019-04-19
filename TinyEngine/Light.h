@@ -14,6 +14,7 @@ using namespace std;
 #include "Texture.h"
 
 class DirectionalShadowMapRenderer;
+class OmniDirectionalShadowMapRenderer;
 class Light : public Component
 {
 public:
@@ -27,16 +28,15 @@ public:
 	virtual string getTypeName() = 0;
 	virtual string getTypeCountName() = 0;
 	virtual void RenderShadowMap() = 0;
-	virtual Texture* GetShadowMap() = 0;
-	virtual glm::mat4 GetLightSpaceMatrix() = 0;
+	virtual void SetShadowMap(Material * material, int id) = 0;
 protected:
+	static const string SHADOW_MAP_NAME;
+
 	string getKeyInArray(string key, int id);
 private:
 	static const string AMBIENT_NAME;
 	static const string DIFFUSE_NAME;
 	static const string SPECULAR_NAME;
-	static const string LIGHT_SPACE_MATRIX_NAME;
-	static const string SHADOW_MAP_NAME;
 
 	static const glm::vec3 DEFAULT_AMBIENT;
 	static const glm::vec3 DEFAULT_DIFFUSE;
@@ -55,11 +55,12 @@ public:
 	string getTypeName() override;
 	string getTypeCountName() override;
 	void RenderShadowMap() override;
-	Texture* GetShadowMap() override;
-	glm::mat4 GetLightSpaceMatrix() override;
+	void SetShadowMap(Material * material, int id);
+	glm::mat4 GetLightSpaceMatrix();
 private:
 	static const string DIRECTIONAL_LIGHT_ARRAY_NAME;
 	static const string DIRECTIONAL_LIGHT_COUNT_NAME;
+	static const string LIGHT_SPACE_MATRIX_NAME;
 	static const string DIRECTION_NAME;
 
 	DirectionalShadowMapRenderer* shadowMapRenderer;
@@ -74,6 +75,8 @@ public:
 	float linear = DEFAULT_LINEAR;
 	float quadratic = DEFAULT_QUADRATIC;
 
+	float range = DEFAULT_RANGE;
+
 	PointLight(Object* object);
 
 	string GetComponentName() override;
@@ -81,8 +84,7 @@ public:
 	string getTypeName() override;
 	string getTypeCountName() override;
 	void RenderShadowMap() override;
-	Texture* GetShadowMap() override;
-	glm::mat4 GetLightSpaceMatrix() override;
+	void SetShadowMap(Material * material, int id);
 private:
 	static const string POINT_LIGHT_ARRAY_NAME;
 	static const string POINT_LIGHT_COUNT_NAME;
@@ -91,10 +93,15 @@ private:
 	static const string CONSTANT_NAME;
 	static const string LINEAR_NAME;
 	static const string QUADRATIC_NAME;
+	static const string RANGE_NAME;
 	
 	static const float DEFAULT_CONSTANT;
 	static const float DEFAULT_LINEAR;
 	static const float DEFAULT_QUADRATIC;
+
+	static const float DEFAULT_RANGE;
+
+	OmniDirectionalShadowMapRenderer* shadowMapRenderer;
 };
 
 class SpotLight : public Light 
@@ -112,8 +119,7 @@ public:
 	string getTypeName() override;
 	string getTypeCountName() override;
 	void RenderShadowMap() override;
-	Texture* GetShadowMap() override;
-	glm::mat4 GetLightSpaceMatrix() override;
+	void SetShadowMap(Material * material, int id);
 private:
 	static const string SPOT_LIGHT_ARRAY_NAME;
 	static const string SPOT_LIGHT_COUNT_NAME;
