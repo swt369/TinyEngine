@@ -2,7 +2,9 @@
 #define MESH_H
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
 
+#include <map>
 #include <vector>
 #include <string>
 using namespace std;
@@ -29,6 +31,7 @@ private:
 	int inctancingAmount;
 
 	void SetupMesh();
+	void CalcTangents();
 };
 
 #endif // !MESH_H
