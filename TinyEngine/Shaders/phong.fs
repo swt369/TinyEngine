@@ -182,11 +182,28 @@ float calcDirectionalShadow(DirectionalLight light)
 
 float calcOmniDirectionalShadow(PointLight light)
 {
+	vec3 sampleOffsetDirections[20] = vec3[]
+	(
+		vec3( 1, 1, 1), vec3( 1, -1, 1), vec3(-1, -1, 1), vec3(-1, 1, 1),
+		vec3( 1, 1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
+		vec3( 1, 1, 0), vec3( 1, -1, 0), vec3(-1, -1, 0), vec3(-1, 1, 0),
+		vec3( 1, 0, 1), vec3(-1, 0, 1), vec3( 1, 0, -1), vec3(-1, 0, -1),
+		vec3( 0, 1, 1), vec3( 0, -1, 1), vec3( 0, -1, -1), vec3( 0, 1, -1)
+	);
+	
+	float shadow = 0.0;
+	float bias = 0.15;
+	int samples = 20;
 	vec3 lightToFrag = FragPos - light.position;
-	float closestDepth = texture(light.shadowMap, lightToFrag).r * light.range;
+	float viewDistance = length(viewPos - FragPos);
 	float currentDepth = length(lightToFrag);
-	float bias = 0.05;
-	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+	float diskRadius = 0.05;
+	for (int i = 0; i < samples; i++)
+	{
+		float closestDepth = texture(light.shadowMap, lightToFrag + sampleOffsetDirections[i] * diskRadius).r * light.range;
+		shadow += currentDepth - bias > closestDepth ? 1.0 : 0.0;
+	}
+	shadow /= float(samples);
 	
 	return shadow;
 }
