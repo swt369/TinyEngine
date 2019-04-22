@@ -30,8 +30,6 @@ public:
 	virtual void RenderShadowMap() = 0;
 	virtual void SetShadowMap(Material * material, int id) = 0;
 protected:
-	static const string SHADOW_MAP_NAME;
-
 	string getKeyInArray(string key, int id);
 private:
 	static const string AMBIENT_NAME;
@@ -62,6 +60,7 @@ private:
 	static const string DIRECTIONAL_LIGHT_COUNT_NAME;
 	static const string LIGHT_SPACE_MATRIX_NAME;
 	static const string DIRECTION_NAME;
+	static const string SHADOW_MAP_ARRAY_NAME;
 
 	DirectionalShadowMapRenderer* shadowMapRenderer;
 };
@@ -94,6 +93,7 @@ private:
 	static const string LINEAR_NAME;
 	static const string QUADRATIC_NAME;
 	static const string RANGE_NAME;
+	static const string SHADOW_MAP_ARRAY_NAME;
 	
 	static const float DEFAULT_CONSTANT;
 	static const float DEFAULT_LINEAR;

@@ -6,7 +6,6 @@
 const string Light::AMBIENT_NAME = "ambient";
 const string Light::DIFFUSE_NAME = "diffuse";
 const string Light::SPECULAR_NAME = "specular";
-const string Light::SHADOW_MAP_NAME = "shadowMap";
 
 const glm::vec3 Light::DEFAULT_AMBIENT = glm::vec3(0.1f, 0.1f, 0.1f);
 const glm::vec3 Light::DEFAULT_DIFFUSE = glm::vec3(0.5f, 0.5f, 0.5f);
@@ -17,6 +16,7 @@ const string DirectionalLight::DIRECTIONAL_LIGHT_ARRAY_NAME = "directionalLights
 const string DirectionalLight::DIRECTIONAL_LIGHT_COUNT_NAME = "directionalLightCount";
 const string DirectionalLight::LIGHT_SPACE_MATRIX_NAME = "lightSpaceMatrix";
 const string DirectionalLight::DIRECTION_NAME = "direction";
+const string DirectionalLight::SHADOW_MAP_ARRAY_NAME = "directionalShadowMaps";
 
 const string PointLight::POINT_LIGHT_NAME = "PointLight";
 const string PointLight::POINT_LIGHT_ARRAY_NAME = "pointLights";
@@ -26,6 +26,7 @@ const string PointLight::CONSTANT_NAME = "constant";
 const string PointLight::LINEAR_NAME = "linear";
 const string PointLight::QUADRATIC_NAME = "quadratic";
 const string PointLight::RANGE_NAME = "range";
+const string PointLight::SHADOW_MAP_ARRAY_NAME = "omniDirectionalShadowMaps";
 const float PointLight::DEFAULT_CONSTANT = 1.0f;
 const float PointLight::DEFAULT_LINEAR = 0.045f;
 const float PointLight::DEFAULT_QUADRATIC = 0.0075f;
@@ -90,7 +91,7 @@ void DirectionalLight::RenderShadowMap()
 
 void DirectionalLight::SetShadowMap(Material * material, int id)
 {
-	material->setTexture(getKeyInArray(SHADOW_MAP_NAME, id), (Texture*)shadowMapRenderer->GetShadowMap(), false);
+	material->setTexture(StringUtil::getKeyInArray(SHADOW_MAP_ARRAY_NAME, id), (Texture*)shadowMapRenderer->GetShadowMap(), false);
 }
 
 glm::mat4 DirectionalLight::GetLightSpaceMatrix()
@@ -135,7 +136,7 @@ void PointLight::RenderShadowMap()
 
 void PointLight::SetShadowMap(Material * material, int id)
 {
-	material->setCubemap(getKeyInArray(SHADOW_MAP_NAME, id), (Cubemap*)(shadowMapRenderer->GetShadowMap()), false);
+	material->setCubemap(StringUtil::getKeyInArray(SHADOW_MAP_ARRAY_NAME, id), (Cubemap*)(shadowMapRenderer->GetShadowMap()), false);
 }
 
 SpotLight::SpotLight(Object* object) : Light(object) {}
