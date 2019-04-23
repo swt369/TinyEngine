@@ -4,11 +4,13 @@ RenderPipeline::RenderPipeline()
 {
 	renderShadowMapStage = new RenderShadowMapStage();
 	renderObjectStage = new RenderObjectStage();
-	finalStage = new PostProcessingStage(new Shader("Shaders/postprocessing.vs", "Shaders/postprocessing_nothing.fs"));
+	toneMappingStage = new PostProcessingStage(new Shader("Shaders/toneMapping.vs", "Shaders/toneMapping.fs"));
+	postProcessingStage = new PostProcessingStage(new Shader("Shaders/postprocessing.vs", "Shaders/postprocessing_nothing.fs"));
 
 	stages.push_back(renderShadowMapStage);
 	stages.push_back(renderObjectStage);
-	stages.push_back(finalStage);
+	stages.push_back(toneMappingStage);
+	stages.push_back(postProcessingStage);
 }
 
 void RenderPipeline::Render()

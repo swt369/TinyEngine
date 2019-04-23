@@ -42,7 +42,8 @@ class FrameBuffer : public IFrameBuffer
 {
 public:
 	FrameBuffer(FrameBufferSampleType sampleType = SINGLESAMPLE_F, int samples = 1, int width = SystemSettings::WINDOW_WIDTH, int height = SystemSettings::WINDOW_HEIGHT,
-		BufferSetting colorBufferSetting = USE_TEXTURE, BufferSetting depthBufferSetting = USE_RBO, BufferSetting stencilBufferSetting = USE_RBO, bool combineDepthAndStencil = true);
+		BufferSetting colorBufferSetting = USE_TEXTURE, BufferSetting depthBufferSetting = USE_RBO, BufferSetting stencilBufferSetting = USE_RBO, bool combineDepthAndStencil = true,
+		bool allowHDR = false);
 
 	void Bind() override;
 	void Unbind() override;
@@ -62,7 +63,7 @@ private:
 	unsigned int depthAndStencilRBO;
 
 	void CreateFrameBufferInternal(int width, int height, 
-		BufferSetting colorBufferSetting, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting, bool combineDepthAndStencil);
+		BufferSetting colorBufferSetting, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting, bool combineDepthAndStencil, bool allowHDR);
 	void CreateAndBindRenderBufferInternal(unsigned int* RBO, int width, int height, int glFormat, int glAttachment);
 	void CreateAndBindTextureInternal(ITexture** texture, int glAttachment, int width, int height,
 		int glInternalFormat, int glFormat, int glDatatype = GL_UNSIGNED_BYTE, int wrapMethodX = GL_REPEAT, int wrapMethodY = GL_REPEAT);

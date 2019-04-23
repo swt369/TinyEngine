@@ -1,9 +1,9 @@
 #include "FrameBuffer.h"
 
 FrameBuffer::FrameBuffer(FrameBufferSampleType sampleType, int samples, int width, int height,
-	BufferSetting colorBufferSetting, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting , bool combineDepthAndStencil) : samples(samples)
+	BufferSetting colorBufferSetting, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting , bool combineDepthAndStencil, bool allowHDR) : samples(samples)
 {
-	CreateFrameBufferInternal(width, height, colorBufferSetting, depthBufferSetting, stencilBufferSetting, combineDepthAndStencil);
+	CreateFrameBufferInternal(width, height, colorBufferSetting, depthBufferSetting, stencilBufferSetting, combineDepthAndStencil, allowHDR);
 }
 
 void FrameBuffer::Bind()
@@ -42,7 +42,7 @@ void FrameBuffer::Delete()
 }
 
 void FrameBuffer::CreateFrameBufferInternal(int width, int height, 
-	BufferSetting colorBufferSetting, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting, bool combineDepthAndStencil)
+	BufferSetting colorBufferSetting, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting, bool combineDepthAndStencil, bool allowHDR)
 {
 	glGenFramebuffers(1, &FBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
@@ -54,7 +54,14 @@ void FrameBuffer::CreateFrameBufferInternal(int width, int height,
 	}
 	else if (colorBufferSetting == USE_TEXTURE)
 	{
-		CreateAndBindTextureInternal(&colorBuffer, GL_COLOR_ATTACHMENT0, width, height, GL_RGB, GL_RGB);
+		if (allowHDR)
+		{
+			CreateAndBindTextureInternal(&colorBuffer, GL_COLOR_ATTACHMENT0, width, height, GL_RGBA16F, GL_RGBA, GL_FLOAT);
+		}
+		else
+		{
+			CreateAndBindTextureInternal(&colorBuffer, GL_COLOR_ATTACHMENT0, width, height, GL_RGB, GL_RGB);
+		}
 	}
 	else if (colorBufferSetting == USE_RBO)
 	{

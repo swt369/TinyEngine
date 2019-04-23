@@ -155,62 +155,36 @@ int main()
 	glfwSetCursorPosCallback(pWindow, processMouseMove);
 	glfwSetScrollCallback(pWindow, processScroll);
 
-	//Shader shader("Shaders/phong.vs", "Shaders/phong.fs");
-	//Texture woodTexture("../Resources/wood.png");
-	//Material material(&shader);
-	//material.setTexture("texture_diffuse_0", &woodTexture);
-	//Geometry* mesh = LoadManager::getInstance().LoadGeometryData("cube.mesh");
-	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, 1.5f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(2.0f, 0.0f, 1.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(-5.0f, -0.5f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(-5.0f, 0.0f, 2.0f), glm::vec3(20.0f, 0.0f, 80.0f), glm::vec3(1.0f));
-	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(100.0f, 0.1f, 100.0f));
-
-	//vector<Object*> model = LoadManager::getInstance().LoadModelData("../Resources/nanosuit/nanosuit.obj");
-	//for (auto obj : model)
-	//{
-	//	MeshRenderer* renderer = (MeshRenderer*)(obj->GetComponent(MeshRenderer::MESH_RENDERER_NAME));
-	//	renderer->GetMaterial()->setShader(&shader);
-	//}
-
-	//Shader shader("Shaders/phongWithNormalMap_tangentSpace.vs", "Shaders/phongWithNormalMap_tangentSpace.fs");
-	//Texture brick("../Resources/brickwall.jpg");
-	//Texture normalMap("../Resources/brickwall_normal.jpg");
-	//Material material(&shader);
-	//material.specular = glm::vec3(0.5f);
-	//material.setTexture("texture_diffuse_0", &brick);
-	//material.setTexture("normalMap", &normalMap);
-	//Geometry* mesh = LoadManager::getInstance().LoadGeometryData("cube.mesh");
-	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, 1.5f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(2.0f, 0.0f, 1.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(-5.0f, -0.5f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(-5.0f, 0.0f, 2.0f), glm::vec3(20.0f, 0.0f, 80.0f), glm::vec3(1.0f));
-	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(100.0f, 0.1f, 100.0f));
-
-	Shader shader("Shaders/phongWithNormalMapAndParallax.vs", "Shaders/phongWithNormalMapAndParallax.fs");
-	Texture brick("../Resources/bricks2.jpg");
-	Texture normalMap("../Resources/bricks2_normal.jpg");
-	Texture depthMap("../Resources/bricks2_disp.jpg");
+	Shader shader("Shaders/phong.vs", "Shaders/phong.fs");
+	Texture woodTexture("../Resources/wood.png");
 	Material material(&shader);
-	material.specular = glm::vec3(0.5f);
-	material.setTexture("texture_diffuse_0", &brick);
-	material.setTexture("normalMap", &normalMap);
-	material.setTexture("depthMap", &depthMap);
-	material.setFloat("height_scale", 0.1f);
+	material.ambient = glm::vec3(0.0f);
+	material.diffuse = glm::vec3(1.0f);
+	material.specular = glm::vec3(0.0f);
+	material.setTexture("texture_diffuse_0", &woodTexture);
 	Geometry* mesh = LoadManager::getInstance().LoadGeometryData("cube.mesh");
-	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, 1.5f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(2.0f, 0.0f, 1.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(-5.0f, -0.5f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(-5.0f, 0.0f, 2.0f), glm::vec3(20.0f, 0.0f, 80.0f), glm::vec3(1.0f));
-	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(100.0f, 0.1f, 100.0f));
+	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(2.5f, 2.5f, 27.5f));
 
-	//Object* mainLightObj = ObjectBuilder::CreateObject(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-	//Light* mainLight = mainLightObj->AddComponent<PointLight>();
-	//LightManager::getInstance().registerMainLight(mainLight);
-
-	Object* mainLightObj2 = ObjectBuilder::CreateObject(glm::vec3(10.0f, 16.0f, 5.0f), glm::vec3(-45.0f, 120.0f, 0.0f));
-	Light* mainLight2 = mainLightObj2->AddComponent<DirectionalLight>();
-	LightManager::getInstance().registerMainLight(mainLight2);
+	vector<glm::vec3> lightPositions({
+		glm::vec3(0.0f,  0.0f, 49.5f),
+		glm::vec3(-1.4f, -1.9f, 9.0f),
+		glm::vec3(0.0f, -1.8f, 4.0f),
+		glm::vec3(0.8f, -1.7f, 6.0f),
+		});
+	vector<glm::vec3> lightColors({
+		glm::vec3(200.0f, 200.0f, 200.0f),
+		glm::vec3(0.4f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 0.4f, 0.0f),
+		glm::vec3(0.0f, 0.0f, 0.4f),
+		});
+	vector<Object*> lightObjs;
+	for (int i = 0; i < lightColors.size(); i++)
+	{
+		Object* lightObj = ObjectBuilder::CreateObject(lightPositions[i]);
+		Light* light = lightObj->AddComponent<PointLight>();
+		light->diffuse = lightColors[i];
+		LightManager::getInstance().registerLight(light);
+	}
 
 	Object* cameraObj = ObjectBuilder::CreateObject(glm::vec3(0.0f));
 	cameraObj->AddComponent<Camera>();

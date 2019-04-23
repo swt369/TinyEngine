@@ -5,11 +5,12 @@
 #include "RenderPipeline.h"
 #include "RenderStage.h"
 #include "ShadowMapRenderer.h"
+#include "SystemSettings.h"
 
 RenderObjectStage::RenderObjectStage()
 {
-	frameBuffer = new FrameBuffer();
-	multisampleFrameBuffer = new FrameBuffer(MULTISAMPLE_F, 4);
+	frameBuffer = new FrameBuffer(SINGLESAMPLE_F, 1, SystemSettings::WINDOW_WIDTH, SystemSettings::WINDOW_HEIGHT, USE_TEXTURE, USE_RBO, USE_RBO, true, true);
+	multisampleFrameBuffer = new FrameBuffer(MULTISAMPLE_F, 4, SystemSettings::WINDOW_WIDTH, SystemSettings::WINDOW_HEIGHT, USE_TEXTURE, USE_RBO, USE_RBO, true, true);
 }
 
 void RenderObjectStage::SetMSAA(bool enabled)

@@ -20,7 +20,8 @@ private:
 
 	RenderShadowMapStage* renderShadowMapStage;
 	RenderObjectStage* renderObjectStage;
-	PostProcessingStage* finalStage;
+	PostProcessingStage* toneMappingStage;
+	PostProcessingStage* postProcessingStage;
 };
 
 #endif // !RENDER_PIPELINE_H
