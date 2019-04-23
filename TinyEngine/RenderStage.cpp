@@ -6,39 +6,45 @@
 #include "RenderStage.h"
 #include "ShadowMapRenderer.h"
 
-RenderObjectStage::RenderObjectStage() {}
+RenderObjectStage::RenderObjectStage()
+{
+	frameBuffer = new FrameBuffer();
+	multisampleFrameBuffer = new MultisampleFrameBuffer(4);
+}
+
+void RenderObjectStage::SetMSAA(bool enabled)
+{
+	this->isMSAAEnabled = enabled;
+}
 
 IFrameBuffer * RenderObjectStage::Render(IFrameBuffer * inputFrameBuffer, bool isFinal)
 {
 	RenderManager::getInstance().SortRenderQueue();
 
-	if (!isFinal && inputFrameBuffer != nullptr)
+	IFrameBuffer* initialFrameBuffer = nullptr;
+	if (isMSAAEnabled)
 	{
-		inputFrameBuffer->Bind();
+		initialFrameBuffer = multisampleFrameBuffer;
 	}
+	else
+	{
+		initialFrameBuffer = frameBuffer;
+	}
+
+	initialFrameBuffer->Bind();
 	RenderManager::getInstance().RenderObjects(Camera::GetWorldCamera());
-	if (!isFinal && inputFrameBuffer != nullptr)
+	initialFrameBuffer->Unbind();
+
+	if (isMSAAEnabled)
 	{
-		inputFrameBuffer->Unbind();
+		multisampleFrameBuffer->BindReadOnly();
+		frameBuffer->BindDrawOnly();
+		glBlitFramebuffer(0, 0, SystemSettings::WINDOW_WIDTH, SystemSettings::WINDOW_HEIGHT, 0, 0, SystemSettings::WINDOW_WIDTH, SystemSettings::WINDOW_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+		frameBuffer->UnbindDrawOnly();
+		multisampleFrameBuffer->UnbindReadOnly();
 	}
 
-	return inputFrameBuffer;
-}
-
-BlitStage::BlitStage()
-{
-	outputFrameBuffer = new FrameBuffer();
-}
-
-IFrameBuffer * BlitStage::Render(IFrameBuffer * inputFrameBuffer, bool isFinal)
-{
-	inputFrameBuffer->BindReadOnly();
-	outputFrameBuffer->BindDrawOnly();
-	glBlitFramebuffer(0, 0, SystemSettings::WINDOW_WIDTH, SystemSettings::WINDOW_HEIGHT, 0, 0, SystemSettings::WINDOW_WIDTH, SystemSettings::WINDOW_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	inputFrameBuffer->UnbindReadOnly();
-	outputFrameBuffer->UnbindDrawOnly();
-
-	return outputFrameBuffer;
+	return frameBuffer;
 }
 
 PostProcessingStage::PostProcessingStage(Shader * postProcessingShader) : postProcessingShader(postProcessingShader)
@@ -81,7 +87,6 @@ IFrameBuffer * VisualizeShadowMapStage::Render(IFrameBuffer * inputFrameBuffer, 
 	glDisable(GL_DEPTH_TEST);
 	glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	//shadowMapMaterial->setTexture("shadowMap", ShadowMapRenderer::getInstance().GetShadowMap());
 	quad->draw(Camera::GetWorldCamera());
 
 	return outputFrameBuffer;

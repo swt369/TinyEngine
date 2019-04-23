@@ -17,15 +17,10 @@ public:
 	void SetMSAA(bool enabled);
 private:
 	vector<IRenderStage*> stages;
-	FrameBuffer* initialFrameBuffer;
-	MultisampleFrameBuffer* initialMultisampleFrameBuffer;
 
 	RenderShadowMapStage* renderShadowMapStage;
 	RenderObjectStage* renderObjectStage;
-	BlitStage* blitStage;
 	PostProcessingStage* finalStage;
-
-	bool isMSAAEnabled = true;
 };
 
 #endif // !RENDER_PIPELINE_H

@@ -25,17 +25,14 @@ class RenderObjectStage : public IRenderStage
 public:
 	RenderObjectStage();
 
-	IFrameBuffer* Render(IFrameBuffer* inputFrameBuffer, bool isFinal) override;
-};
-
-class BlitStage : public IRenderStage
-{
-public:
-	BlitStage();
+	void SetMSAA(bool enabled);
 
 	IFrameBuffer* Render(IFrameBuffer* inputFrameBuffer, bool isFinal) override;
 private:
-	IFrameBuffer* outputFrameBuffer;
+	FrameBuffer* frameBuffer;
+	MultisampleFrameBuffer* multisampleFrameBuffer;
+
+	bool isMSAAEnabled = true;
 };
 
 class PostProcessingStage : public IRenderStage
