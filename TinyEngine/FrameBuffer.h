@@ -7,6 +7,12 @@
 #include "SystemSettings.h"
 #include "Texture.h"
 
+enum FrameBufferSampleType
+{
+	SINGLESAMPLE_F,
+	MULTISAMPLE_F,
+};
+
 enum BufferSetting
 {
 	NON,
@@ -35,7 +41,7 @@ public:
 class FrameBuffer : public IFrameBuffer
 {
 public:
-	FrameBuffer(int width = SystemSettings::WINDOW_WIDTH, int height = SystemSettings::WINDOW_HEIGHT, 
+	FrameBuffer(FrameBufferSampleType sampleType = SINGLESAMPLE_F, int samples = 1, int width = SystemSettings::WINDOW_WIDTH, int height = SystemSettings::WINDOW_HEIGHT,
 		BufferSetting colorBufferSetting = USE_TEXTURE, BufferSetting depthBufferSetting = USE_RBO, BufferSetting stencilBufferSetting = USE_RBO, bool combineDepthAndStencil = true);
 
 	void Bind() override;
@@ -46,6 +52,8 @@ public:
 	void UnbindDrawOnly() override;
 	void Delete() override;
 private:
+	int samples;
+
 	unsigned int FBO;
 
 	unsigned int colorRBO;

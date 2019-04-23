@@ -3,12 +3,9 @@
 #include <iostream>
 #include "stb_image.h"
 
-Texture::Texture(int width, int height, int internalFormat, int format, int dataType, int wrapMethodX, int wrapMethodY) 
-	: Texture(nullptr, width, height, internalFormat, format, dataType, wrapMethodX, wrapMethodY) {}
-
-Texture::Texture(unsigned char * data, int width, int height, int internalFormat, int format, int dataType, int wrapMethodX, int wrapMethodY)
+Texture::Texture(TextureSampleType sampleType, int samples, int width, int height, int internalFormat, int format, int dataType, int wrapMethodX, int wrapMethodY)
 {
-	CreateTextureInternal(nullptr, width, height, internalFormat, format, dataType, wrapMethodX, wrapMethodY);
+	CreateTextureInternal(samples, nullptr, width, height, internalFormat, format, dataType, wrapMethodX, wrapMethodY);
 }
 
 Texture::Texture(std::string imgPath, int wrapMethodX, int wrapMethodY) : Texture(imgPath.c_str(), wrapMethodX, wrapMethodY) {}
@@ -19,7 +16,7 @@ Texture::Texture(const char * imgPath, int wrapMethodX, int wrapMethodY)
 	int glFormat;
 	unsigned char* data = LoadTexture(imgPath, &width, &height, &glFormat);
 
-	CreateTextureInternal(data, width, height, glFormat, glFormat, GL_UNSIGNED_BYTE, wrapMethodX, wrapMethodY);
+	CreateTextureInternal(1, data, width, height, glFormat, glFormat, GL_UNSIGNED_BYTE, wrapMethodX, wrapMethodY);
 }
 
 void Texture::Bind(int unit)
@@ -32,25 +29,47 @@ void Texture::Bind(int unit)
 
 	// Set the texture unit of this texture.
 	glActiveTexture(GL_TEXTURE0 + unit);
-	glBindTexture(GL_TEXTURE_2D, ID);
+	glBindTexture(samples == 1 ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE, ID);
 }
 
-void Texture::CreateTextureInternal(unsigned char * data, int width, int height, int glInternalFormat, int glFormat, int glDataType, int glWrapMethodX, int glWrapMethodY)
+void Texture::CreateTextureInternal(int samples, unsigned char * data, int width, int height, int glInternalFormat, int glFormat, int glDataType, int glWrapMethodX, int glWrapMethodY)
 {
 	glGenTextures(1, &ID);
+
+	this->samples = samples;
+	if (samples == 1)
+	{
+		CreateSingleSampleTextureInternal(data, width, height, glInternalFormat, glFormat, glDataType, glWrapMethodX, glWrapMethodY);
+	}
+	else
+	{
+		CreateMultisampleTextureInternal(samples, width, height, glInternalFormat);
+	}
+
+	if (data)
+	{
+		stbi_image_free(data);
+	}
+}
+
+void Texture::CreateSingleSampleTextureInternal(unsigned char * data, int width, int height, int glInternalFormat, int glFormat, int glDataType, int glWrapMethodX, int glWrapMethodY)
+{
 	glBindTexture(GL_TEXTURE_2D, ID);
 	glTexImage2D(GL_TEXTURE_2D, 0, glInternalFormat, width, height, 0, glFormat, glDataType, data);
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrapMethodX);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrapMethodY);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-	if (data)
-	{
-		glGenerateMipmap(GL_TEXTURE_2D);
-		stbi_image_free(data);
-	}
+	glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+void Texture::CreateMultisampleTextureInternal(int samples, int width, int height, int glInternalFormat)
+{
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ID);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, glInternalFormat, width, height, GL_TRUE);
 }
 
 unsigned char * Texture::LoadTexture(const char * imgPath, int * width, int * height, int* glFormat)

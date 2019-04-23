@@ -1,7 +1,7 @@
 #include "FrameBuffer.h"
 
-FrameBuffer::FrameBuffer(int width, int height,
-	BufferSetting colorBufferSetting, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting , bool combineDepthAndStencil)
+FrameBuffer::FrameBuffer(FrameBufferSampleType sampleType, int samples, int width, int height,
+	BufferSetting colorBufferSetting, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting , bool combineDepthAndStencil) : samples(samples)
 {
 	CreateFrameBufferInternal(width, height, colorBufferSetting, depthBufferSetting, stencilBufferSetting, combineDepthAndStencil);
 }
@@ -104,16 +104,23 @@ void FrameBuffer::CreateAndBindRenderBufferInternal(unsigned int * RBO, int widt
 {
 	glGenRenderbuffers(1, RBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, *RBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, glFormat, width, height);
+	if (samples == 1)
+	{
+		glRenderbufferStorage(GL_RENDERBUFFER, glFormat, width, height);
+	}
+	else
+	{
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, glFormat, width, height);
+	}
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, glAttachment, GL_RENDERBUFFER, *RBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
 void FrameBuffer::CreateAndBindTextureInternal(ITexture ** texture, int glAttachment, int width, int height, int glInternalFormat, int glFormat, int glDatatype, int wrapMethodX, int wrapMethodY)
 {
-	*texture = new Texture(width, height, glInternalFormat, glFormat, glDatatype, wrapMethodX, wrapMethodY);
+	*texture = new Texture(samples == 1 ? SINGLESAMPLE_T : MULTISAMPLE_T, samples, width, height, glInternalFormat, glFormat, glDatatype, wrapMethodX, wrapMethodY);
 	(*texture)->Bind();
-	glFramebufferTexture2D(GL_FRAMEBUFFER, glAttachment, GL_TEXTURE_2D, (*texture)->ID, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, glAttachment, samples == 1 ? GL_TEXTURE_2D : GL_TEXTURE_2D_MULTISAMPLE, (*texture)->ID, 0);
 }
 
 void FrameBuffer::CreateAndBindCubemapInternal(ITexture ** texture, int glAttachment, int width, int height)

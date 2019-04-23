@@ -9,7 +9,7 @@
 RenderObjectStage::RenderObjectStage()
 {
 	frameBuffer = new FrameBuffer();
-	multisampleFrameBuffer = new MultisampleFrameBuffer(4);
+	multisampleFrameBuffer = new FrameBuffer(MULTISAMPLE_F, 4);
 }
 
 void RenderObjectStage::SetMSAA(bool enabled)
@@ -71,24 +71,6 @@ IFrameBuffer * PostProcessingStage::Render(IFrameBuffer * inputFrameBuffer, bool
 	{
 		outputFrameBuffer->Unbind();
 	}
-	return outputFrameBuffer;
-}
-
-VisualizeShadowMapStage::VisualizeShadowMapStage()
-{
-	shadowMapShader = new Shader("Shaders/shadowMap.vs", "Shaders/shadowMap.fs");
-	outputFrameBuffer = new FrameBuffer();
-	shadowMapMaterial = new Material(shadowMapShader);
-	quad = ObjectBuilder::CreateObject(LoadManager::getInstance().LoadGeometryData("quad.mesh"), shadowMapMaterial, 4000, glm::vec3(0.0f, 0.0f, 0.0f));
-}
-
-IFrameBuffer * VisualizeShadowMapStage::Render(IFrameBuffer * inputFrameBuffer, bool isFinal)
-{
-	glDisable(GL_DEPTH_TEST);
-	glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	quad->draw(Camera::GetWorldCamera());
-
 	return outputFrameBuffer;
 }
 

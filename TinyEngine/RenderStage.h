@@ -30,7 +30,7 @@ public:
 	IFrameBuffer* Render(IFrameBuffer* inputFrameBuffer, bool isFinal) override;
 private:
 	FrameBuffer* frameBuffer;
-	MultisampleFrameBuffer* multisampleFrameBuffer;
+	FrameBuffer* multisampleFrameBuffer;
 
 	bool isMSAAEnabled = true;
 };
@@ -52,18 +52,5 @@ class RenderShadowMapStage : public IRenderStage
 {
 public:
 	IFrameBuffer* Render(IFrameBuffer* inputFrameBuffer, bool isFinal) override;
-};
-
-class VisualizeShadowMapStage : public IRenderStage
-{
-public:
-	VisualizeShadowMapStage();
-
-	IFrameBuffer* Render(IFrameBuffer* inputFrameBuffer, bool isFinal) override;
-private:
-	IFrameBuffer* outputFrameBuffer;
-	Shader* shadowMapShader;
-	Material* shadowMapMaterial;
-	Object* quad;
 };
 #endif // !RENDER_STAGE_H
