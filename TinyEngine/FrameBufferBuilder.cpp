@@ -78,7 +78,7 @@ void FrameBufferArgs::SetWidth(int width)
 
 void FrameBufferArgs::SetHeight(int height)
 {
-	this->height;
+	this->height = height;
 }
 
 void FrameBufferArgs::SetSamples(int samples)

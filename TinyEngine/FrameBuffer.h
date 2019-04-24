@@ -47,8 +47,8 @@ public:
 	void UnbindDrawOnly() override;
 	void Delete() override;
 private:
-	FrameBuffer(int samples, int width, int height, 
-		vector<BufferSetting> colorBufferSetting, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting, bool combineDepthAndStencil = true, bool allowHDR = false);
+	FrameBuffer(int samples, int width, int height,
+		vector<BufferSetting> colorBufferSetting, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting, bool combineDepthAndStencil, bool allowHDR);
 
 	int samples;
 

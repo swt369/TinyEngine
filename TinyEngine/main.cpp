@@ -164,7 +164,6 @@ int main()
 	material.setTexture("texture_diffuse_0", &woodTexture);
 	Geometry* mesh = LoadManager::getInstance().LoadGeometryData("cube.mesh");
 	ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(2.5f, 2.5f, 27.5f));
-
 	vector<glm::vec3> lightPositions({
 		glm::vec3(0.0f,  0.0f, 49.5f),
 		glm::vec3(-1.4f, -1.9f, 9.0f),
@@ -185,6 +184,26 @@ int main()
 		light->diffuse = lightColors[i];
 		LightManager::getInstance().registerLight(light);
 	}
+
+	//Shader shader("Shaders/phongWithNormalMapAndParallax.vs", "Shaders/phongWithNormalMapAndParallax.fs");
+	//Texture brick("../Resources/bricks2.jpg");
+	//Texture normalMap("../Resources/bricks2_normal.jpg");
+	//Texture depthMap("../Resources/bricks2_disp.jpg");
+	//Material material(&shader);
+	//material.specular = glm::vec3(0.5f);
+	//material.setTexture("texture_diffuse_0", &brick);
+	//material.setTexture("normalMap", &normalMap);
+	//material.setTexture("depthMap", &depthMap);
+	//material.setFloat("height_scale", 0.1f);
+	//Geometry* mesh = LoadManager::getInstance().LoadGeometryData("cube.mesh");
+	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, 1.5f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(2.0f, 0.0f, 1.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(-5.0f, -0.5f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(-5.0f, 0.0f, 2.0f), glm::vec3(20.0f, 0.0f, 80.0f), glm::vec3(1.0f));
+	//ObjectBuilder::CreateObject(mesh, &material, 1000, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f), glm::vec3(100.0f, 0.1f, 100.0f));
+	//Object* mainLightObj2 = ObjectBuilder::CreateObject(glm::vec3(10.0f, 16.0f, 5.0f), glm::vec3(-45.0f, 120.0f, 0.0f));
+	//Light* mainLight2 = mainLightObj2->AddComponent<DirectionalLight>();
+	//LightManager::getInstance().registerMainLight(mainLight2);
 
 	Object* cameraObj = ObjectBuilder::CreateObject(glm::vec3(0.0f));
 	cameraObj->AddComponent<Camera>();
