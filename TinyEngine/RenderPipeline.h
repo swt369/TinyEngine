@@ -19,6 +19,7 @@ private:
 
 	RenderShadowMapStage* renderShadowMapStage;
 	RenderObjectStage* renderObjectStage;
+	BloomStage* bloomStage;
 	PostProcessingStage* toneMappingStage;
 	PostProcessingStage* postProcessingStage;
 };

@@ -53,4 +53,26 @@ class RenderShadowMapStage : public IRenderStage
 public:
 	IFrameBuffer* Render(IFrameBuffer* inputFrameBuffer, bool isFinal) override;
 };
+
+class BloomStage : public IRenderStage
+{
+public:
+	BloomStage();
+
+	IFrameBuffer* Render(IFrameBuffer* inputFrameBuffer, bool isFinal) override;
+private:
+	IFrameBuffer* extractFrameBuffer;
+	Shader* extractShader;
+	Material* extractMaterial;
+
+	IFrameBuffer* blurFrameBuffer[2];
+	Shader* blurShader;
+	Material* blurMaterial;
+
+	IFrameBuffer* mixFrameBuffer;
+	Shader* mixShader;
+	Material* mixMaterial;
+
+	Object* quad;
+};
 #endif // !RENDER_STAGE_H
