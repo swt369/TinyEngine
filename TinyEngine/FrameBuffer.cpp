@@ -1,9 +1,9 @@
 #include "FrameBuffer.h"
 
-FrameBuffer::FrameBuffer(FrameBufferSampleType sampleType, int samples, int width, int height,
-	BufferSetting colorBufferSetting, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting , bool combineDepthAndStencil, bool allowHDR) : samples(samples)
+FrameBuffer::FrameBuffer(int samples, int width, int height,
+	vector<BufferSetting> colorBufferSettings, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting , bool combineDepthAndStencil, bool allowHDR) : samples(samples)
 {
-	CreateFrameBufferInternal(width, height, colorBufferSetting, depthBufferSetting, stencilBufferSetting, combineDepthAndStencil, allowHDR);
+	CreateFrameBufferInternal(width, height, colorBufferSettings, depthBufferSetting, stencilBufferSetting, combineDepthAndStencil, allowHDR);
 }
 
 void FrameBuffer::Bind()
@@ -42,33 +42,39 @@ void FrameBuffer::Delete()
 }
 
 void FrameBuffer::CreateFrameBufferInternal(int width, int height, 
-	BufferSetting colorBufferSetting, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting, bool combineDepthAndStencil, bool allowHDR)
+	vector<BufferSetting> colorBufferSettings, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting, bool combineDepthAndStencil, bool allowHDR)
 {
 	glGenFramebuffers(1, &FBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
-	if (colorBufferSetting == NON)
+	if (colorBufferSettings.size() == 0)
 	{
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
 	}
-	else if (colorBufferSetting == USE_TEXTURE)
+	else
 	{
-		if (allowHDR)
+		for (int i = 0; i < colorBufferSettings.size(); i++)
 		{
-			CreateAndBindTextureInternal(&colorBuffer, GL_COLOR_ATTACHMENT0, width, height, GL_RGBA16F, GL_RGBA, GL_FLOAT);
+			BufferSetting colorBufferSetting = colorBufferSettings[i];
+			if (colorBufferSetting == USE_TEXTURE)
+			{
+				ITexture* colorBuffer = nullptr;
+				if (allowHDR)
+				{
+					CreateAndBindTextureInternal(&colorBuffer, GL_COLOR_ATTACHMENT0 + i, width, height, GL_RGBA16F, GL_RGBA, GL_FLOAT);
+				}
+				else
+				{
+					CreateAndBindTextureInternal(&colorBuffer, GL_COLOR_ATTACHMENT0 + i, width, height, GL_RGB, GL_RGB);
+				}
+				colorBuffers.push_back(colorBuffer);
+			}
 		}
-		else
-		{
-			CreateAndBindTextureInternal(&colorBuffer, GL_COLOR_ATTACHMENT0, width, height, GL_RGB, GL_RGB);
-		}
-	}
-	else if (colorBufferSetting == USE_RBO)
-	{
-		CreateAndBindRenderBufferInternal(&colorRBO, width, height, GL_RGB, GL_COLOR_ATTACHMENT0);
 	}
 
-	if (depthBufferSetting == stencilBufferSetting)
+
+	if (depthBufferSetting == stencilBufferSetting && combineDepthAndStencil)
 	{
 		if (depthBufferSetting == USE_TEXTURE)
 		{

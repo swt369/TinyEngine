@@ -1,17 +1,14 @@
 #ifndef FRAME_BUFFER_H
 #define FRAME_BUFFER_H
 
+#include <vector>
+using namespace std;
+
 #include <glad/glad.h>
 
 #include "Cubemap.h"
 #include "SystemSettings.h"
 #include "Texture.h"
-
-enum FrameBufferSampleType
-{
-	SINGLESAMPLE_F,
-	MULTISAMPLE_F,
-};
 
 enum BufferSetting
 {
@@ -32,7 +29,7 @@ public:
 	virtual void UnbindDrawOnly() = 0;
 	virtual void Delete() = 0;
 
-	ITexture* colorBuffer;
+	vector<ITexture*> colorBuffers;
 	ITexture* depthBuffer;
 	ITexture* stencilBuffer;
 	ITexture* depthAndStencilBuffer;
@@ -40,11 +37,8 @@ public:
 
 class FrameBuffer : public IFrameBuffer
 {
+	friend class FrameBufferBuilder;
 public:
-	FrameBuffer(FrameBufferSampleType sampleType = SINGLESAMPLE_F, int samples = 1, int width = SystemSettings::WINDOW_WIDTH, int height = SystemSettings::WINDOW_HEIGHT,
-		BufferSetting colorBufferSetting = USE_TEXTURE, BufferSetting depthBufferSetting = USE_RBO, BufferSetting stencilBufferSetting = USE_RBO, bool combineDepthAndStencil = true,
-		bool allowHDR = false);
-
 	void Bind() override;
 	void Unbind() override;
 	void BindReadOnly() override;
@@ -53,17 +47,19 @@ public:
 	void UnbindDrawOnly() override;
 	void Delete() override;
 private:
+	FrameBuffer(int samples, int width, int height, 
+		vector<BufferSetting> colorBufferSetting, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting, bool combineDepthAndStencil = true, bool allowHDR = false);
+
 	int samples;
 
 	unsigned int FBO;
 
-	unsigned int colorRBO;
 	unsigned int depthRBO;
 	unsigned int stencilRBO;
 	unsigned int depthAndStencilRBO;
 
 	void CreateFrameBufferInternal(int width, int height, 
-		BufferSetting colorBufferSetting, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting, bool combineDepthAndStencil, bool allowHDR);
+		vector<BufferSetting> colorBufferSettings, BufferSetting depthBufferSetting, BufferSetting stencilBufferSetting, bool combineDepthAndStencil, bool allowHDR);
 	void CreateAndBindRenderBufferInternal(unsigned int* RBO, int width, int height, int glFormat, int glAttachment);
 	void CreateAndBindTextureInternal(ITexture** texture, int glAttachment, int width, int height,
 		int glInternalFormat, int glFormat, int glDatatype = GL_UNSIGNED_BYTE, int wrapMethodX = GL_REPEAT, int wrapMethodY = GL_REPEAT);

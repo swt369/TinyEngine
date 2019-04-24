@@ -5,7 +5,6 @@
 using namespace std;
 
 #include "FrameBuffer.h"
-#include "MultisampleFrameBuffer.h"
 #include "RenderStage.h"
 
 class RenderPipeline

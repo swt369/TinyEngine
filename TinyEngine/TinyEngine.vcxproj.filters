@@ -63,12 +63,6 @@
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MultisampleFrameBuffer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MultisampleTexture.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Object.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -123,6 +117,9 @@
     <ClCompile Include="ObjectController.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="FrameBufferBuilder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -171,12 +168,6 @@
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="MeshRenderer.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MultisampleFrameBuffer.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MultisampleTexture.h">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
@@ -228,6 +219,9 @@
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="ObjectController.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameBufferBuilder.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

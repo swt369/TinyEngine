@@ -1,3 +1,4 @@
+#include "FrameBufferBuilder.h"
 #include "LightManager.h"
 #include "ObjectBuilder.h"
 #include "RenderManager.h"
@@ -19,7 +20,16 @@ const float DirectionalShadowMapRenderer::DEFAULT_DEPTH = -10.0f;
 DirectionalShadowMapRenderer::DirectionalShadowMapRenderer(DirectionalLight * light) : light(light)
 {
 	shadowMapShader = new Shader("Shaders/directionalShadowMap.vs", "Shaders/directionalShadowMap.fs");
-	shadowMapFrameBuffer = new FrameBuffer(SINGLESAMPLE_F, 1, DEFAULT_SHADOW_MAP_WIDTH, DEFAULT_SHADOW_MAP_HEIGHT, NON, USE_TEXTURE, NON);
+
+	FrameBufferBuilder* builder = new FrameBufferBuilder();
+	shadowMapFrameBuffer = builder
+		->SetWidth(DEFAULT_SHADOW_MAP_WIDTH)
+		->SetHeight(DEFAULT_SHADOW_MAP_HEIGHT)
+		->SetSamples(1)
+		->SetDepthBuffer(USE_TEXTURE)
+		->SetStencilBuffer(NON)
+		->Build();
+	delete builder;
 
 	shadowMapCameraObj = ObjectBuilder::CreateObject(glm::vec3(0.0f));
 	shadowMapCamera = shadowMapCameraObj->AddComponent<Camera>();
@@ -99,8 +109,17 @@ const vector<glm::vec3> OmniDirectionalShadowMapRenderer::ups =
 
 OmniDirectionalShadowMapRenderer::OmniDirectionalShadowMapRenderer(PointLight * light) : light(light)
 {
-	shadowMapFrameBuffer = new FrameBuffer(SINGLESAMPLE_F, 1, DEFAULT_SHADOW_MAP_WIDTH, DEFAULT_SHADOW_MAP_HEIGHT, NON, USE_CUBEMAP, NON);
 	shadowMapShader = new Shader("Shaders/omniDirectionalShadowMap.vs", "Shaders/omniDirectionalShadowMap.fs", "Shaders/omniDirectionalShadowMap.gs");
+
+	FrameBufferBuilder* builder = new FrameBufferBuilder();
+	shadowMapFrameBuffer = builder
+		->SetWidth(DEFAULT_SHADOW_MAP_WIDTH)
+		->SetHeight(DEFAULT_SHADOW_MAP_HEIGHT)
+		->SetSamples(1)
+		->SetDepthBuffer(USE_CUBEMAP)
+		->SetStencilBuffer(NON)
+		->Build();
+	delete builder;
 
 	shadowMapCameraObj = ObjectBuilder::CreateObject(glm::vec3(0.0f));
 	shadowMapCamera = shadowMapCameraObj->AddComponent<Camera>();

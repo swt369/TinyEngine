@@ -1,3 +1,4 @@
+#include "FrameBufferBuilder.h"
 #include "LightManager.h"
 #include "LoadManager.h"
 #include "ObjectBuilder.h"
@@ -9,8 +10,30 @@
 
 RenderObjectStage::RenderObjectStage()
 {
-	frameBuffer = new FrameBuffer(SINGLESAMPLE_F, 1, SystemSettings::WINDOW_WIDTH, SystemSettings::WINDOW_HEIGHT, USE_TEXTURE, USE_RBO, USE_RBO, true, true);
-	multisampleFrameBuffer = new FrameBuffer(MULTISAMPLE_F, 4, SystemSettings::WINDOW_WIDTH, SystemSettings::WINDOW_HEIGHT, USE_TEXTURE, USE_RBO, USE_RBO, true, true);
+	FrameBufferBuilder* builder = new FrameBufferBuilder();
+	frameBuffer = builder
+		->SetWidth(SystemSettings::WINDOW_WIDTH)
+		->SetHeight(SystemSettings::WINDOW_HEIGHT)
+		->SetSamples(1)
+		->AppendColorBuffer(USE_TEXTURE)
+		->SetDepthBuffer(USE_RBO)
+		->SetStencilBuffer(USE_RBO)
+		->CombineDepthAndStencil(true)
+		->AllowHDR(true)
+		->Build();
+
+	multisampleFrameBuffer = builder
+		->SetWidth(SystemSettings::WINDOW_WIDTH)
+		->SetHeight(SystemSettings::WINDOW_HEIGHT)
+		->SetSamples(4)
+		->AppendColorBuffer(USE_TEXTURE)
+		->SetDepthBuffer(USE_RBO)
+		->SetStencilBuffer(USE_RBO)
+		->CombineDepthAndStencil(true)
+		->AllowHDR(true)
+		->Build();
+
+	delete builder;
 }
 
 void RenderObjectStage::SetMSAA(bool enabled)
@@ -50,7 +73,19 @@ IFrameBuffer * RenderObjectStage::Render(IFrameBuffer * inputFrameBuffer, bool i
 
 PostProcessingStage::PostProcessingStage(Shader * postProcessingShader) : postProcessingShader(postProcessingShader)
 {
-	outputFrameBuffer = new FrameBuffer();
+	FrameBufferBuilder* builder = new FrameBufferBuilder();
+	outputFrameBuffer = builder
+		->SetWidth(SystemSettings::WINDOW_WIDTH)
+		->SetHeight(SystemSettings::WINDOW_HEIGHT)
+		->SetSamples(1)
+		->AppendColorBuffer(USE_TEXTURE)
+		->SetDepthBuffer(USE_RBO)
+		->SetStencilBuffer(USE_RBO)
+		->CombineDepthAndStencil(true)
+		->AllowHDR(true)
+		->Build();
+	delete builder;
+
 	postProcessingMaterial = new Material(postProcessingShader);
 	quad = ObjectBuilder::CreateObject(LoadManager::getInstance().LoadGeometryData("quad.mesh"), postProcessingMaterial, 4000, glm::vec3(0.0f, 0.0f, -0.0f));
 }
@@ -65,7 +100,7 @@ IFrameBuffer * PostProcessingStage::Render(IFrameBuffer * inputFrameBuffer, bool
 	glDisable(GL_DEPTH_TEST);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	postProcessingMaterial->setTexture("screenTexture", (Texture*)(inputFrameBuffer->colorBuffer));
+	postProcessingMaterial->setTexture("screenTexture", (Texture*)(inputFrameBuffer->colorBuffers[0]));
 	quad->draw(Camera::GetWorldCamera());
 
 	if (!isFinal && inputFrameBuffer != nullptr)

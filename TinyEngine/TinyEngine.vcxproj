@@ -126,6 +126,7 @@
     <ClCompile Include="ComponentManager.cpp" />
     <ClCompile Include="Cubemap.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="FrameBufferBuilder.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightManager.cpp" />
@@ -136,8 +137,6 @@
     <ClCompile Include="MeshFilter.cpp" />
     <ClCompile Include="MeshLoader.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
-    <ClCompile Include="MultisampleFrameBuffer.cpp" />
-    <ClCompile Include="MultisampleTexture.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectBuilder.cpp" />
     <ClCompile Include="ObjectController.cpp" />
@@ -164,6 +163,7 @@
     <ClInclude Include="ComponentManager.h" />
     <ClInclude Include="Cubemap.h" />
     <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="FrameBufferBuilder.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightManager.h" />
@@ -174,8 +174,6 @@
     <ClInclude Include="MeshFilter.h" />
     <ClInclude Include="MeshLoader.h" />
     <ClInclude Include="MeshRenderer.h" />
-    <ClInclude Include="MultisampleFrameBuffer.h" />
-    <ClInclude Include="MultisampleTexture.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectBuilder.h" />
     <ClInclude Include="ObjectController.h" />
